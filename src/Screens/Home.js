@@ -1,5 +1,11 @@
 import React, {Component} from 'react';
-import {StyleSheet, ScrollView, AsyncStorage, Linking} from 'react-native';
+import {
+  StyleSheet,
+  ScrollView,
+  AsyncStorage,
+  Linking,
+  ToastAndroid,
+} from 'react-native';
 import {
   Container,
   Content,
@@ -69,6 +75,11 @@ class Home extends Component {
       AsyncStorage.setItem('cart', JSON.stringify(cart));
       return cart;
     });
+    ToastAndroid.show(
+      'Success Add to Cart',
+      ToastAndroid.TOP,
+      ToastAndroid.SHORT,
+    );
   }
 
   render() {

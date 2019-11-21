@@ -136,7 +136,6 @@ export default class Menu extends Component {
               <Text>History</Text>
             </Body>
           </ListItem>
-          <ListItem header></ListItem>
           <ListItem icon>
             <Left>
               <Button danger onPress={() => this.handleLogout()}>

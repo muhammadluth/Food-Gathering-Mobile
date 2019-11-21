@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, ToastAndroid} from 'react-native';
 import {
   Container,
   Content,
@@ -63,13 +63,14 @@ class EditProduct extends Component {
       }
     });
   };
-  handleEditProduct = async id => {
+  handleEditProduct = async () => {
     const {product, description, image, category, price, qty} = {
       ...this.state,
     };
+    const id = this.props.navigation.getParam('id');
 
     const pd = new FormData();
-    pd.append('name', name);
+    pd.append('name', product);
     pd.append('description', description);
     pd.append('image', {
       name: image.fileName,
@@ -95,7 +96,7 @@ class EditProduct extends Component {
         this.props.navigation.navigate('ManageData');
       })
       .catch(err => {
-        console.log(err.response);
+        console.log(err);
         ToastAndroid.show(
           'Failed Edit Data',
           ToastAndroid.TOP,
@@ -105,7 +106,7 @@ class EditProduct extends Component {
       });
   };
   render() {
-    console.log(this.state.price);
+    console.log(this.props.navigation.getParam('id'));
     return (
       <Container>
         <View>
@@ -234,7 +235,7 @@ class EditProduct extends Component {
                 <Button
                   success
                   style={styles.buttons}
-                  onPress={() => this.handleEditProduct(this.state.id)}>
+                  onPress={() => this.handleEditProduct()}>
                   <Icon name="ios-paper" />
                   <Text>Save Data</Text>
                 </Button>
