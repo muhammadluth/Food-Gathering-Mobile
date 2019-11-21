@@ -19,10 +19,12 @@ import {
 import {Grid, Col, Row} from 'react-native-easy-grid';
 import ImagePicker from 'react-native-image-picker';
 import Header from '../Header';
+import Http from '../../Public/Utils/Http';
 class EditProduct extends Component {
   constructor(props) {
     super();
     this.state = {
+      id: '',
       product: '',
       description: '',
       image: '',
@@ -57,11 +59,53 @@ class EditProduct extends Component {
     };
     ImagePicker.launchImageLibrary(options, response => {
       if (response.uri) {
-        this.setState({image: response.fileName});
+        this.setState({image: response});
       }
     });
   };
+  handleEditProduct = async id => {
+    const {product, description, image, category, price, qty} = {
+      ...this.state,
+    };
+
+    const pd = new FormData();
+    pd.append('name', name);
+    pd.append('description', description);
+    pd.append('image', {
+      name: image.fileName,
+      type: image.type,
+      uri:
+        Platform.OS === 'android'
+          ? image.uri
+          : image.uri.replace('file://', ''),
+    });
+    pd.append('category_id', category);
+    pd.append('price', price);
+    pd.append('qty', qty);
+
+    console.log(pd);
+    await Http.put(`/api/v1/product/${id}`, pd)
+      .then(result => {
+        console.log(result);
+        ToastAndroid.show(
+          'Success Edit Data',
+          ToastAndroid.TOP,
+          ToastAndroid.SHORT,
+        );
+        this.props.navigation.navigate('ManageData');
+      })
+      .catch(err => {
+        console.log(err.response);
+        ToastAndroid.show(
+          'Failed Edit Data',
+          ToastAndroid.TOP,
+          ToastAndroid.SHORT,
+        );
+        this.props.navigation.navigate('EditData');
+      });
+  };
   render() {
+    console.log(this.state.price);
     return (
       <Container>
         <View>
@@ -161,7 +205,7 @@ class EditProduct extends Component {
                       <Input
                         onChangeText={this.onChangeTextPrice}
                         value={this.state.price}
-                        keyboardType="numeric"
+                        keyboardType="default"
                         autoCapitalize="none"
                       />
                     </Item>
@@ -179,7 +223,7 @@ class EditProduct extends Component {
                       <Input
                         onChangeText={this.onChangeTextQty}
                         value={this.state.qty}
-                        keyboardType="numeric"
+                        keyboardType="default"
                         autoCapitalize="none"
                       />
                     </Item>
@@ -187,7 +231,10 @@ class EditProduct extends Component {
                 </Row>
               </Grid>
               <View style={styles.viewButton}>
-                <Button success style={styles.buttons}>
+                <Button
+                  success
+                  style={styles.buttons}
+                  onPress={() => this.handleEditProduct(this.state.id)}>
                   <Icon name="ios-paper" />
                   <Text>Save Data</Text>
                 </Button>

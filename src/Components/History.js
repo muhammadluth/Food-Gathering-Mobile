@@ -34,15 +34,12 @@ class History extends React.Component {
       detalProduct: [],
       recentdata: '',
     };
-    // this.getRecentOrder = this.getRecentOrder.bind(this);
   }
   componentDidMount() {
     this.getCountOrder();
-    // this.getValue()
     this.getRecentOrder();
   }
 
-  // Card
   getCountOrder = async () => {
     await await Http.get(`/api/v1/order/allorder`)
       .then(result => {
@@ -71,23 +68,6 @@ class History extends React.Component {
         console.log(err);
       });
   };
-
-  // grafik
-  // getRecentOrder = async event => {
-  //   let data = event.target.value;
-  //   await Http.get(`/api/v1/order/revenue?order=${data}`)
-  //     .then(result => {
-  //       this.setState({
-  //         data: result.data.data,
-  //         order: data,
-  //       });
-  //     })
-  //     .catch(err => {
-  //       console.log(err);
-  //     });
-  // };
-
-  // show recent order
   getRecentOrder = async value => {
     let data = value;
     await Http.get(`/api/v1/order/recent?order=${data}`)
@@ -114,89 +94,45 @@ class History extends React.Component {
         <Container>
           <Header {...this.props} />
           <Content>
-            <View style={{flexDirection: 'row'}}>
-              <View style={styles.ViewCard}>
-                <Card style={styles.card}>
-                  <Text style={styles.textCard}>Today's Income</Text>
-                  <Text style={styles.textCard}>
-                    {ConvertRupiah.convert(this.state.count)}
-                  </Text>
-                  <Text style={styles.textCard}>100%</Text>
-                </Card>
-              </View>
-              <View style={styles.ViewCard}>
-                <Card style={styles.card}>
-                  <Text style={styles.textCard}>Orders</Text>
-                  <Text style={styles.textCard}>{this.state.orders}</Text>
-                  <Text style={styles.textCard}>
-                    {this.state.growthOrdeWeek}%
-                  </Text>
-                </Card>
-              </View>
-              <View style={styles.ViewCard}>
-                <Card style={styles.card}>
-                  <Text style={styles.textCard}>This Year's Income</Text>
-                  <Text style={styles.textCard}>
-                    {ConvertRupiah.convert(this.state.resYearIncome)}
-                  </Text>
-                  <Text style={styles.textCard}>{this.state.yearCount}%</Text>
-                </Card>
+            <View style={styles.viewAll}>
+              <Text style={styles.text}>ALL ORDER</Text>
+
+              <View style={{flexDirection: 'row'}}>
+                <View style={styles.ViewCard}>
+                  <Card style={styles.card}>
+                    <Text style={styles.textCard}>Today's Income</Text>
+                    <Text style={styles.textCard}>
+                      {ConvertRupiah.convert(this.state.count)}
+                    </Text>
+                    <Text style={styles.textCard}>
+                      {this.state.growth}% Yesterday
+                    </Text>
+                  </Card>
+                </View>
+                <View style={styles.ViewCard}>
+                  <Card style={styles.card}>
+                    <Text style={styles.textCard}>Orders</Text>
+                    <Text style={styles.textCard}>{this.state.orders}</Text>
+                    <Text style={styles.textCard}>
+                      {this.state.growthOrdeWeek}% Last Week
+                    </Text>
+                  </Card>
+                </View>
+                <View style={styles.ViewCard}>
+                  <Card style={styles.card}>
+                    <Text style={styles.textCard}>This Year's Income</Text>
+                    <Text style={styles.textCard}>
+                      {ConvertRupiah.convert(this.state.resYearIncome)}
+                    </Text>
+                    <Text style={styles.textCard}>
+                      {this.state.yearCount}% Last Year
+                    </Text>
+                  </Card>
+                </View>
               </View>
             </View>
             <ScrollView>
-              <View>
-                <Text style={styles.text}>REVENUE</Text>
-                <LineChart
-                  data={{
-                    labels: [
-                      'January',
-                      'February',
-                      'March',
-                      'April',
-                      'May',
-                      'June',
-                    ],
-                    datasets: [
-                      {
-                        data: [
-                          Math.random() * 100,
-                          Math.random() * 100,
-                          Math.random() * 100,
-                          Math.random() * 100,
-                          Math.random() * 100,
-                          Math.random() * 100,
-                        ],
-                      },
-                    ],
-                  }}
-                  width={Dimensions.get('window').width} // from react-native
-                  height={220}
-                  yAxisLabel={'$'}
-                  chartConfig={{
-                    backgroundColor: '#ff4757',
-                    backgroundGradientFrom: '#ff4757',
-                    backgroundGradientTo: '#ff4757',
-                    decimalPlaces: 2, // optional, defaults to 2dp
-                    color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                    labelColor: (opacity = 1) =>
-                      `rgba(255, 255, 255, ${opacity})`,
-                    style: {
-                      borderRadius: 16,
-                    },
-                    propsForDots: {
-                      r: '6',
-                      strokeWidth: '2',
-                      stroke: '#ffa726',
-                    },
-                  }}
-                  bezier
-                  style={{
-                    marginVertical: 8,
-                    borderRadius: 16,
-                  }}
-                />
-              </View>
-              <View>
+              <View style={{marginTop: 20}}>
                 <Text style={styles.text}>RECENT ORDER</Text>
                 <View style={styles.ViewPicker}>
                   <Picker
@@ -289,20 +225,24 @@ const styles = StyleSheet.create({
   icons: {
     margin: 20,
   },
+  viewAll: {
+    marginTop: 10,
+  },
   ViewCard: {
     marginTop: 10,
     marginLeft: 5,
     marginRight: 5,
-    height: 60,
+    height: 70,
     width: 120,
   },
   card: {
+    height: '100%',
     borderRadius: 10,
     backgroundColor: '#ff4757',
   },
   textCard: {
-    marginTop: 1,
-    fontSize: 13,
+    marginTop: 5,
+    fontSize: 12,
     textAlign: 'center',
     fontWeight: '100',
     color: '#fff',

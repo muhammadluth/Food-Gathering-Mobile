@@ -19,7 +19,8 @@ import {connect} from 'react-redux';
 import {getMenu} from '../../Public/Redux/Actions/Menu';
 import Header from '../Header';
 import Http from '../../Public/Utils/Http';
-import ListData from './ListData';
+import ConvertRupiah from 'rupiah-format';
+import {API_BASEURL} from 'react-native-dotenv';
 class Index extends Component {
   constructor(props) {
     super(props);
@@ -27,7 +28,6 @@ class Index extends Component {
       data: [],
       loading: true,
     };
-    this.handleButtonEditData = this.handleButtonEditData.bind(this);
   }
   componentDidMount() {
     this.fetchData();
@@ -60,9 +60,7 @@ class Index extends Component {
         this.props.navigation.navigate('ManageData');
       });
   };
-  handleButtonEditData() {
-    this.props.navigation.navigate('EditData');
-  }
+
   render() {
     AsyncStorage.getItem('token').then(res => console.log(res));
     return (
@@ -87,13 +85,60 @@ class Index extends Component {
             </Body>
           </ListItem>
           {this.state.loading ? (
-            <Spinner color="red" />
+            <Spinner />
           ) : (
-            <ListData
-              data={this.state.data}
-              handleDelete={this.handleDelete}
-              handleButtonEditData={this.handleButtonEditData}
-            />
+            <List>
+              {this.state.data.map(item => (
+                <ListItem thumbnail>
+                  <Left>
+                    <Thumbnail
+                      square
+                      source={{uri: `${API_BASEURL}/` + item.image}}
+                    />
+                  </Left>
+                  <Body>
+                    <Text style={{fontWeight: 'bold'}}>{item.name}</Text>
+                    <Text note numberOfLines={1}>
+                      {ConvertRupiah.convert(item.price)}
+                    </Text>
+                  </Body>
+                  <ListItem icon style={{marginRight: -20}}>
+                    <Left>
+                      <Button
+                        style={{backgroundColor: '#FF9501'}}
+                        onPress={() =>
+                          this.props.navigation.navigate('EditData', {
+                            id: item.id,
+                            product: item.name,
+                            description: item.description,
+                            image: item.image,
+                            category: item.category,
+                            price: item.price,
+                            qty: item.qty,
+                          })
+                        }>
+                        <Icon active name="create" />
+                      </Button>
+                    </Left>
+                    <Body>
+                      <Text>Edit Data</Text>
+                    </Body>
+                  </ListItem>
+                  <ListItem icon>
+                    <Left>
+                      <Button
+                        style={{backgroundColor: 'red'}}
+                        onPress={() => this.handleDelete(item.id)}>
+                        <Icon active name="trash" />
+                      </Button>
+                    </Left>
+                    <Body>
+                      <Text>Delete Data</Text>
+                    </Body>
+                  </ListItem>
+                </ListItem>
+              ))}
+            </List>
           )}
         </Content>
       </Container>

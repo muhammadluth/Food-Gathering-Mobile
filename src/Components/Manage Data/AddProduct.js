@@ -50,37 +50,29 @@ class AddProduct extends Component {
     });
   };
   handleAddProduct = async () => {
-    const FormCreate = (image, data) => {
-      const form = new FormData();
-      form.append('image', {
-        name: image.fileName,
-        type: image.type,
-        uri:
-          Platform.OS === 'android'
-            ? image.uri
-            : image.uri.replace('file://', ''),
-      });
-      Object.keys(data).forEach(key => {
-        pd.append(key, data[key]);
-      });
-      return form;
-    };
-
-    const {name, description, category, price, qty} = {
+    const {name, description, image, category, price, qty} = {
       ...this.state,
     };
 
     const pd = new FormData();
     pd.append('name', name);
     pd.append('description', description);
+    pd.append('image', {
+      name: image.fileName,
+      type: image.type,
+      uri:
+        Platform.OS === 'android'
+          ? image.uri
+          : image.uri.replace('file://', ''),
+    });
     pd.append('category_id', category);
     pd.append('price', price);
     pd.append('qty', qty);
 
     console.log(pd);
-    await Http.post(`/api/v1/product/`, FormCreate(image, pd))
-      .then(res => {
-        console.log(res);
+    await Http.post(`/api/v1/product/`, pd)
+      .then(result => {
+        console.log(result);
         ToastAndroid.show(
           'Success Add Data',
           ToastAndroid.TOP,
@@ -156,7 +148,7 @@ class AddProduct extends Component {
                   </Col>
                   <Col>
                     <Item regular style={styles.itemProduct}>
-                      <Button onPress={this.handleChoosePhoto}>
+                      <Button onPress={() => this.handleChoosePhoto()}>
                         <Text>Choose Photo</Text>
                       </Button>
                     </Item>
@@ -222,7 +214,7 @@ class AddProduct extends Component {
                 <Button
                   success
                   style={styles.buttons}
-                  onPress={() => this.handleAddProduct}>
+                  onPress={this.handleAddProduct}>
                   <Icon name="ios-paper" />
                   <Text>Save Data</Text>
                 </Button>
