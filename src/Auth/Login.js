@@ -13,6 +13,7 @@ import {
   Title,
   Button,
   Text,
+  Spinner,
 } from 'native-base';
 import Http from '../Public/Utils/Http';
 import PasswordInputText from 'react-native-hide-show-password-input';
@@ -24,6 +25,7 @@ export default class Login extends Component {
       email: '',
       password: '',
       showToast: false,
+      loading: false,
     };
     this.handleLogin = this.handleLogin.bind(this);
   }
@@ -31,12 +33,14 @@ export default class Login extends Component {
   handleLogin() {
     const emails = this.state.email;
     const passwords = this.state.password;
+    this.setState({loading: true});
 
     Http.post(`/api/v1/users/login`, {
       email: emails,
       password: passwords,
     })
       .then(res => {
+        this.setState({loading: false});
         if (res.data.success === 200) {
           AsyncStorage.setItem('user', `${res.data.username}`);
           AsyncStorage.setItem('token', `${res.data.token}`);
@@ -52,6 +56,7 @@ export default class Login extends Component {
         }
       })
       .catch(err => {
+        this.setState({loading: false});
         console.log(err);
         alert('Your Connections Failed');
       });
@@ -81,6 +86,7 @@ export default class Login extends Component {
                       <Input
                         onChangeText={Text => this.setState({email: Text})}
                         value={this.state.email}
+                        placeholder="example@gmail.com"
                         keyboardType="email-address"
                         autoCapitalize="none"
                       />
@@ -93,20 +99,23 @@ export default class Login extends Component {
                   <View style={styles.ViewButton}>
                     <View style={styles.Button}>
                       <Button
-                        style={{borderRadius: 10}}
+                        style={{borderRadius: 10, backgroundColor: '#ff4757'}}
                         onPress={() => this.handleLogin()}>
-                        <Text>Login</Text>
+                        {this.state.loading === true ? (
+                          <Spinner color="#fff" style={{width: '100%'}} />
+                        ) : (
+                          <Text>Login</Text>
+                        )}
                       </Button>
                     </View>
                     <View style={styles.Button}>
                       <Button
                         bordered
-                        primary
-                        style={{borderRadius: 10}}
+                        style={{borderRadius: 10, borderColor: '#ff4757'}}
                         onPress={() =>
                           this.props.navigation.navigate('SignUp')
                         }>
-                        <Text>Sign Up</Text>
+                        <Text style={{color: '#ff4757'}}>Sign Up</Text>
                       </Button>
                     </View>
                   </View>

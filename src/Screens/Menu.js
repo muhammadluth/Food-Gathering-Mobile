@@ -1,5 +1,11 @@
 import React, {Component} from 'react';
-import {StyleSheet, Image, ToastAndroid} from 'react-native';
+import {
+  StyleSheet,
+  Image,
+  ToastAndroid,
+  ScrollView,
+  RefreshControl,
+} from 'react-native';
 import {
   Container,
   Content,
@@ -25,6 +31,7 @@ export default class Menu extends Component {
       email: '',
       image: '',
       loading: true,
+      refresh: false,
     };
   }
 
@@ -78,75 +85,89 @@ export default class Menu extends Component {
     );
     this.props.navigation.navigate('Index');
   }
+  _onRefresh = () => {
+    this.setState({refresh: true});
+    this.setState({
+      refresh: false,
+    });
+  };
   render() {
     return (
       <Container>
         <Header {...this.props} />
-        <Content>
-          <View style={{alignItems: 'center'}}>
-            {this.state.loading ? (
-              <Spinner color="red" />
-            ) : (
-              <Image style={styles.imageProfile} source={this.state.image} />
-            )}
-          </View>
-          <View style={styles.viewAccount}>
-            <Text style={styles.name}>{this.state.user}</Text>
-          </View>
-          <View style={styles.viewAccount}>
-            <Text style={styles.email}>{this.state.email}</Text>
-          </View>
-          <ListItem icon>
-            <Left>
-              {this.state.email !== 'admin@admin.com' ? (
-                <Button
-                  style={{backgroundColor: '#f69b31'}}
-                  onPress={() => this.handleButtonManageFalse()}>
-                  <Icon active name="ios-paper" />
-                </Button>
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refresh}
+              onRefresh={this._onRefresh}
+            />
+          }>
+          <Content>
+            <View style={{alignItems: 'center'}}>
+              {this.state.loading === true ? (
+                <Spinner color="red" />
               ) : (
-                <Button
-                  style={{backgroundColor: '#f69b31'}}
-                  onPress={() => this.handleButtonManageTrue()}>
-                  <Icon active name="ios-paper" />
-                </Button>
+                <Image style={styles.imageProfile} source={this.state.image} />
               )}
-            </Left>
-            <Body>
-              <Text>Manage Data</Text>
-            </Body>
-          </ListItem>
-          <ListItem icon>
-            <Left>
-              {this.state.email !== 'admin@admin.com' ? (
-                <Button
-                  style={{backgroundColor: '#67baf6'}}
-                  onPress={() => this.handleButtonHistoryFalse()}>
-                  <Icon active name="ios-trending-up" />
+            </View>
+            <View style={styles.viewAccount}>
+              <Text style={styles.name}>{this.state.user}</Text>
+            </View>
+            <View style={styles.viewAccount}>
+              <Text style={styles.email}>{this.state.email}</Text>
+            </View>
+            <ListItem icon>
+              <Left>
+                {this.state.email !== 'muhammadluthfi059@gmail.com' ? (
+                  <Button
+                    style={{backgroundColor: '#f69b31'}}
+                    onPress={() => this.handleButtonManageFalse()}>
+                    <Icon active name="ios-paper" />
+                  </Button>
+                ) : (
+                  <Button
+                    style={{backgroundColor: '#f69b31'}}
+                    onPress={() => this.handleButtonManageTrue()}>
+                    <Icon active name="ios-paper" />
+                  </Button>
+                )}
+              </Left>
+              <Body>
+                <Text>Manage Data</Text>
+              </Body>
+            </ListItem>
+            <ListItem icon>
+              <Left>
+                {this.state.email !== 'muhammadluthfi059@gmail.com' ? (
+                  <Button
+                    style={{backgroundColor: '#67baf6'}}
+                    onPress={() => this.handleButtonHistoryFalse()}>
+                    <Icon active name="ios-trending-up" />
+                  </Button>
+                ) : (
+                  <Button
+                    style={{backgroundColor: '#67baf6'}}
+                    onPress={() => this.handleButtonHistoryTrue()}>
+                    <Icon active name="ios-trending-up" />
+                  </Button>
+                )}
+              </Left>
+              <Body>
+                <Text>History</Text>
+              </Body>
+            </ListItem>
+            <ListItem icon>
+              <Left>
+                <Button danger onPress={() => this.handleLogout()}>
+                  <Icon active name="ios-log-out" />
                 </Button>
-              ) : (
-                <Button
-                  style={{backgroundColor: '#67baf6'}}
-                  onPress={() => this.handleButtonHistoryTrue()}>
-                  <Icon active name="ios-trending-up" />
-                </Button>
-              )}
-            </Left>
-            <Body>
-              <Text>History</Text>
-            </Body>
-          </ListItem>
-          <ListItem icon>
-            <Left>
-              <Button danger onPress={() => this.handleLogout()}>
-                <Icon active name="ios-log-out" />
-              </Button>
-            </Left>
-            <Body>
-              <Text>Log-Out</Text>
-            </Body>
-          </ListItem>
-        </Content>
+              </Left>
+              <Body>
+                <Text>Log-Out</Text>
+              </Body>
+            </ListItem>
+          </Content>
+        </ScrollView>
       </Container>
     );
   }

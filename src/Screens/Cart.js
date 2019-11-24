@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {
   Container,
   Content,
-  Footer,
   Button,
   Icon,
   Text,
@@ -12,8 +11,15 @@ import {
   Thumbnail,
   Body,
   Right,
+  Badge,
 } from 'native-base';
-import {StyleSheet, AsyncStorage, ToastAndroid} from 'react-native';
+import {
+  StyleSheet,
+  AsyncStorage,
+  ToastAndroid,
+  RefreshControl,
+  ScrollView,
+} from 'react-native';
 import Header from '../Components/Header';
 import ConvertRupiah from 'rupiah-format';
 import Http from '../Public/Utils/Http';
@@ -24,27 +30,42 @@ export default class Cart extends Component {
     this.state = {
       modalVisible: false,
       data: [],
-      cart: this.props.navigation.getParam('cart'),
+      cart: [],
       total: 0,
       name: '',
       user: '',
       email: '',
       token: '',
+      refresh: false,
     };
   }
   async componentDidMount() {
+    this.handleData();
     try {
       const value = await AsyncStorage.getItem('user');
       const token = await AsyncStorage.getItem('token');
       const email = await AsyncStorage.getItem('email');
       if (value !== null) {
-        this.setState({user: value, token: token, email: email});
+        this.setState({
+          user: value,
+          token: token,
+          email: email,
+        });
         console.log(value);
       }
       console.log(value);
     } catch (error) {
       console.log(error);
     }
+  }
+  _onRefresh = () => {
+    this.setState({refresh: true});
+    this.setState({
+      refresh: false,
+    });
+  };
+  handleData() {
+    this.setState({cart: this.props.navigation.getParam('cart')});
   }
   async handleCheckOut() {
     let cashier = await this.state.user;
@@ -76,29 +97,20 @@ export default class Cart extends Component {
         });
     });
   }
-  cancel = event => {
-    event.preventDefault();
-    if (event) {
-      this.setState({
-        cart: [],
-      });
-      ToastAndroid.show(
-        'Cancle Checkout',
-        ToastAndroid.TOP,
-        ToastAndroid.SHORT,
-      );
+  async handleCancel() {
+    await this.setState({
+      cart: [],
+    });
+    ToastAndroid.show('Cancle Checkout', ToastAndroid.TOP, ToastAndroid.SHORT);
+    try {
+      await AsyncStorage.removeItem('cart');
+      return true;
+    } catch (exception) {
+      return false;
     }
-  };
-  // cancel = e => {
-  //   e.preventDefault();
-  //   if (cart) {
-  //     this.setState({
-  //       cart: [],
-  //     });
-  //   }
-  //   this.props.navigation.navigate('Index');
-  // };
+  }
   render() {
+    console.log(this.state.cart);
     if (this.state.cart) {
       var ListCart = this.state.cart.map(item => {
         return (
@@ -130,7 +142,9 @@ export default class Cart extends Component {
             </Right>
             <Right style={{marginTop: 15}}>
               <Body>
-                <Text>{item.qty}</Text>
+                <Badge info>
+                  <Text>{item.qty}</Text>
+                </Badge>
               </Body>
             </Right>
             <Right style={{marginTop: 10}}>
@@ -138,7 +152,6 @@ export default class Cart extends Component {
                 <Button
                   danger
                   small
-                  href="#"
                   onPress={() =>
                     item.qty <= 0 ? this.false : (item.qty -= 1)
                   }>
@@ -151,35 +164,49 @@ export default class Cart extends Component {
       });
     }
     return (
-      <Container>
-        <View>
-          <Header {...this.props} />
-        </View>
-        <Content>{ListCart}</Content>
-        <View>
-          <View style={{margin: 20}}>
-            <Text style={{marginBottom: 10, fontWeight: 'bold'}}>
-              TOTAL :
-              {ConvertRupiah.convert(
-                this.state.cart.reduce((a, c) => a + c.price * c.qty, 0),
-              )}
-            </Text>
-            <Text>Belum termasuk PPN: 10%</Text>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.refresh}
+            onRefresh={this._onRefresh}
+          />
+        }>
+        <Container>
+          <View>
+            <Header {...this.props} />
           </View>
+          <Content>{ListCart}</Content>
+          <View>
+            <View>
+              <Text style={{textAlign: 'center'}}>Pull for Refresh Page</Text>
+            </View>
+            <View style={{margin: 20}}>
+              <Text style={{marginBottom: 10, fontWeight: 'bold'}}>
+                TOTAL :
+                {ConvertRupiah.convert(
+                  this.state.cart.reduce((a, c) => a + c.price * c.qty, 0),
+                )}
+              </Text>
+              <Text>Belum termasuk PPN</Text>
+            </View>
 
-          <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-            <Button danger style={styles.buttonCheckout} onPress={this.cancel}>
-              <Text>Cancel</Text>
-            </Button>
-            <Button
-              success
-              style={styles.buttonCheckout}
-              onPress={() => this.handleCheckOut()}>
-              <Text>Checkout</Text>
-            </Button>
+            <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+              <Button
+                danger
+                style={styles.buttonCheckout}
+                onPress={() => this.handleCancel()}>
+                <Text>Cancel</Text>
+              </Button>
+              <Button
+                success
+                style={styles.buttonCheckout}
+                onPress={() => this.handleCheckOut()}>
+                <Text>Checkout</Text>
+              </Button>
+            </View>
           </View>
-        </View>
-      </Container>
+        </Container>
+      </ScrollView>
     );
   }
 }

@@ -11,7 +11,6 @@ export default class Splashscreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoading: true,
       token: null,
     };
   }
@@ -20,9 +19,7 @@ export default class Splashscreen extends Component {
       const value = await AsyncStorage.getItem('token');
       if (value !== null) {
         this.setState({token: value});
-        console.log(value);
       }
-      console.log(value);
     } catch (error) {
       console.log(error);
     }
@@ -33,7 +30,6 @@ export default class Splashscreen extends Component {
     }, 2000);
   }
   render() {
-    console.log(this.state.token);
     return (
       <Container>
         {this.state.token !== null ? (

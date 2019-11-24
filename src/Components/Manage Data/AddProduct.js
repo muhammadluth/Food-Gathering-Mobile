@@ -16,12 +16,12 @@ import {
   View,
   Picker,
   Item,
+  Spinner,
+  Card,
 } from 'native-base';
-import {Grid, Col, Row} from 'react-native-easy-grid';
 import ImagePicker from 'react-native-image-picker';
 import Header from '../Header';
 import Http from '../../Public/Utils/Http';
-import {API_BASEURL} from 'react-native-dotenv';
 class AddProduct extends Component {
   constructor(props) {
     super();
@@ -33,6 +33,8 @@ class AddProduct extends Component {
       price: '',
       qty: '',
       allPage: [],
+      loading: false,
+      isUpload: false,
     };
   }
 
@@ -45,11 +47,12 @@ class AddProduct extends Component {
     };
     ImagePicker.launchImageLibrary(options, response => {
       if (response.uri) {
-        this.setState({image: response});
+        this.setState({image: response, isUpload: true});
       }
     });
   };
   handleAddProduct = async () => {
+    this.setState({loading: true});
     const {name, description, image, category, price, qty} = {
       ...this.state,
     };
@@ -71,23 +74,24 @@ class AddProduct extends Component {
 
     console.log(pd);
     await Http.post(`/api/v1/product/`, pd)
-      .then(result => {
-        console.log(result);
-        ToastAndroid.show(
-          'Success Add Data',
-          ToastAndroid.TOP,
-          ToastAndroid.SHORT,
-        );
-        this.props.navigation.navigate('ManageData');
+      .then(res => {
+        this.setState({loading: false});
+        console.log(res);
+        if (res.data.status === 200) {
+          ToastAndroid.show(
+            'Success Add Data',
+            ToastAndroid.TOP,
+            ToastAndroid.SHORT,
+          );
+          this.props.navigation.navigate('ManageData');
+        } else {
+          alert('Product Already Exist');
+        }
       })
       .catch(err => {
-        console.log(err.response);
-        ToastAndroid.show(
-          'Failed Add Data',
-          ToastAndroid.TOP,
-          ToastAndroid.SHORT,
-        );
-        this.props.navigation.navigate('AddData');
+        this.setState({loading: false});
+        console.log(err);
+        alert('Connection Timeout');
       });
   };
   render() {
@@ -99,75 +103,76 @@ class AddProduct extends Component {
         </View>
         <Content>
           <View>
-            <Text style={styles.text}>ADD DATA</Text>
+            <Text style={styles.text}>Add Product</Text>
           </View>
           <View>
             <Form>
-              <Grid>
-                <Row>
-                  <Col style={styles.col}>
-                    <Label>Product</Label>
-                  </Col>
-                  <Col style={{width: 5, marginTop: 12}}>
-                    <Label>:</Label>
-                  </Col>
-                  <Col>
-                    <Item regular style={styles.itemProduct}>
+              <View style={{margin: 20}}>
+                <Card style={{padding: 30, borderRadius: 10}}>
+                  <View style={{alignItems: 'center'}}>
+                    {this.state.isUpload === true ? (
+                      <Button
+                        bordered
+                        disabled
+                        style={{
+                          borderColor: '#ff4757',
+                          width: 65,
+
+                          height: 65,
+                          justifyContent: 'center',
+                          borderRadius: 10,
+                        }}
+                        onPress={() => this.handleChoosePhoto()}>
+                        <Icon
+                          type="Ionicons"
+                          name="checkmark-circle-outline"
+                          style={{color: '#000'}}
+                        />
+                      </Button>
+                    ) : (
+                      <Button
+                        bordered
+                        style={{
+                          borderColor: '#ff4757',
+                          width: 65,
+                          height: 65,
+                          justifyContent: 'center',
+                          borderRadius: 10,
+                        }}
+                        onPress={() => this.handleChoosePhoto()}>
+                        <Icon type="Ionicons" name="add" />
+                      </Button>
+                    )}
+                  </View>
+                  <View>
+                    <Item stackedLabel>
+                      <Label>Product</Label>
                       <Input
                         onChangeText={Text => this.setState({name: Text})}
                         value={this.state.name}
                       />
                     </Item>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col style={styles.col}>
-                    <Label>Description</Label>
-                  </Col>
-                  <Col style={{width: 5, marginTop: 12}}>
-                    <Label>:</Label>
-                  </Col>
-                  <Col>
-                    <Item regular style={styles.itemProduct}>
+                  </View>
+                  <View>
+                    <Item stackedLabel>
+                      <Label>Description</Label>
                       <Textarea
-                        rowSpan={5}
+                        rowSpan={3}
                         onChangeText={Text =>
                           this.setState({description: Text})
                         }
                         value={this.state.description}
                       />
                     </Item>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col style={styles.col}>
-                    <Label>Image</Label>
-                  </Col>
-                  <Col style={{width: 5, marginTop: 12}}>
-                    <Label>:</Label>
-                  </Col>
-                  <Col>
-                    <Item regular style={styles.itemProduct}>
-                      <Button onPress={() => this.handleChoosePhoto()}>
-                        <Text>Choose Photo</Text>
-                      </Button>
-                    </Item>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col style={styles.col}>
-                    <Label>Category</Label>
-                  </Col>
-                  <Col style={{width: 5, marginTop: 12}}>
-                    <Label>:</Label>
-                  </Col>
-                  <Col>
-                    <Item regular style={styles.itemProduct}>
+                  </View>
+                  <View>
+                    <Item stackedLabel style={{alignItems: 'flex-start'}}>
+                      <Label>Category</Label>
                       <Picker
                         mode="dropdown"
                         iosHeader="Select Category"
                         iosIcon={<Icon name="arrow-down" />}
-                        style={{width: undefined}}
+                        style={{width: 150, marginLeft: -7}}
                         selectedValue={this.state.category}
                         onValueChange={this.setSelectCategory}>
                         <Picker.Item label="Makanan" value="9" />
@@ -175,49 +180,37 @@ class AddProduct extends Component {
                         <Picker.Item label="Jajanan" value="11" />
                       </Picker>
                     </Item>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col style={styles.col}>
-                    <Label>Price</Label>
-                  </Col>
-                  <Col style={{width: 5, marginTop: 12}}>
-                    <Label>:</Label>
-                  </Col>
-                  <Col>
-                    <Item regular style={styles.itemProduct}>
+                  </View>
+                  <View>
+                    <Item stackedLabel>
+                      <Label>Price</Label>
                       <Input
                         onChangeText={Text => this.setState({price: Text})}
                         value={this.state.price}
                       />
                     </Item>
-                  </Col>
-                </Row>
-                <Row>
-                  <Col style={styles.col}>
-                    <Label>Quantity</Label>
-                  </Col>
-                  <Col style={{width: 5, marginTop: 12}}>
-                    <Label>:</Label>
-                  </Col>
-                  <Col>
-                    <Item regular style={styles.itemProduct}>
+                  </View>
+                  <View>
+                    <Item stackedLabel>
+                      <Label>Quantity</Label>
                       <Input
                         onChangeText={Text => this.setState({qty: Text})}
                         value={this.state.qty}
                       />
                     </Item>
-                  </Col>
-                </Row>
-              </Grid>
-              <View style={styles.viewButton}>
-                <Button
-                  success
-                  style={styles.buttons}
-                  onPress={this.handleAddProduct}>
-                  <Icon name="ios-paper" />
-                  <Text>Save Data</Text>
-                </Button>
+                  </View>
+                  <View style={styles.viewButton}>
+                    <Button
+                      style={styles.buttons}
+                      onPress={this.handleAddProduct}>
+                      {this.state.loading === true ? (
+                        <Spinner color="#fff" style={{width: '100%'}} />
+                      ) : (
+                        <Text>Save Data</Text>
+                      )}
+                    </Button>
+                  </View>
+                </Card>
               </View>
             </Form>
           </View>
@@ -228,44 +221,22 @@ class AddProduct extends Component {
 }
 
 const styles = StyleSheet.create({
-  col: {
-    marginTop: 12,
-    width: 100,
-    marginLeft: 10,
-  },
-  title: {
-    fontSize: 24,
-    margin: 18,
-    fontFamily: 'GothamRounded-Bold',
-    fontWeight: 'bold',
-    color: '#ff4757',
-  },
   text: {
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
     marginTop: 20,
-    marginBottom: 20,
     textDecorationLine: 'underline',
   },
   buttons: {
-    margin: 20,
-    position: 'relative',
+    marginTop: 20,
     borderRadius: 10,
+    backgroundColor: '#ff4757',
   },
   viewButton: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     borderColor: '#000',
-    marginLeft: '25%',
-  },
-  itemProduct: {
-    borderColor: '#bdc3c7',
-    marginBottom: 5,
-    marginRight: 5,
-  },
-  icons: {
-    margin: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

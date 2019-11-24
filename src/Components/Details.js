@@ -1,21 +1,18 @@
 import React, {Component} from 'react';
-import {Image, ImageBackground, StyleSheet} from 'react-native';
+import {
+  ScrollView,
+  RefreshControl,
+  ImageBackground,
+  StyleSheet,
+} from 'react-native';
 import {
   Container,
   Content,
   Card,
-  CardItem,
-  Thumbnail,
   Text,
-  Button,
-  Icon,
-  Left,
-  Body,
-  Right,
   View,
   List,
   ListItem,
-  Separator,
 } from 'native-base';
 import {API_BASEURL} from 'react-native-dotenv';
 import Header from './Header';
@@ -25,6 +22,20 @@ export default class Details extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      id: '',
+      product: '',
+      image: '',
+      price: '', //
+      category: '',
+      description: '', //
+      quantity: '', //
+    };
+  }
+  componentDidMount() {
+    this.getDataDetails();
+  }
+  getDataDetails() {
+    this.setState({
       id: this.props.navigation.getParam('id'),
       product: this.props.navigation.getParam('product'),
       image: this.props.navigation.getParam('image'),
@@ -32,54 +43,68 @@ export default class Details extends Component {
       category: this.props.navigation.getParam('category'),
       description: this.props.navigation.getParam('description'), //
       quantity: this.props.navigation.getParam('quantity'), //
-    };
+    });
   }
+  _onRefresh = () => {
+    this.setState({refresh: true});
+    this.setState({
+      refresh: false,
+    });
+  };
   render() {
     return (
       <Container>
         <Header {...this.props} />
-        <Content>
-          <View style={styles.ViewBody}>
-            <View>
-              <Text style={styles.TextTitle}>{this.state.product}</Text>
-            </View>
-            <View style={styles.View}>
-              <Card style={styles.cardView}>
-                <ImageBackground
-                  source={{uri: `${API_BASEURL}/` + this.state.image}}
-                  style={{height: '100%', width: '100%'}}>
-                  <View style={styles.viewOverlay}>
-                    <Text style={styles.textCategory}>
-                      {this.state.category}
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refresh}
+              onRefresh={this._onRefresh}
+            />
+          }>
+          <Content>
+            <View style={styles.ViewBody}>
+              <View>
+                <Text style={styles.TextTitle}>{this.state.product}</Text>
+              </View>
+              <View style={styles.View}>
+                <Card style={styles.cardView}>
+                  <ImageBackground
+                    source={{uri: `${API_BASEURL}/` + this.state.image}}
+                    style={{height: '100%', width: '100%'}}>
+                    <View style={styles.viewOverlay}>
+                      <Text style={styles.textCategory}>
+                        {this.state.category}
+                      </Text>
+                    </View>
+                  </ImageBackground>
+                </Card>
+              </View>
+              <View>
+                <List>
+                  <ListItem itemDivider>
+                    <Text style={styles.TitleDescription}>Description</Text>
+                  </ListItem>
+                  <ListItem>
+                    <Text style={styles.TextDescription}>
+                      {this.state.description}
                     </Text>
-                  </View>
-                </ImageBackground>
-              </Card>
+                  </ListItem>
+                  <ListItem itemDivider>
+                    <Text>Stock</Text>
+                    <Text style={{paddingHorizontal: 10}}>:</Text>
+                    <Text>{this.state.quantity}</Text>
+                  </ListItem>
+                  <ListItem style={styles.ListDivider} itemDivider>
+                    <Text>Price</Text>
+                    <Text style={{paddingHorizontal: 15}}>:</Text>
+                    <Text>{ConvertRupiah.convert(this.state.price)}</Text>
+                  </ListItem>
+                </List>
+              </View>
             </View>
-            <View>
-              <List>
-                <ListItem itemDivider>
-                  <Text style={styles.TitleDescription}>Description</Text>
-                </ListItem>
-                <ListItem>
-                  <Text style={styles.TextDescription}>
-                    {this.state.description}
-                  </Text>
-                </ListItem>
-                <ListItem itemDivider>
-                  <Text>Stock</Text>
-                  <Text style={{paddingHorizontal: 10}}>:</Text>
-                  <Text>{this.state.quantity}</Text>
-                </ListItem>
-                <ListItem style={styles.ListDivider} itemDivider>
-                  <Text>Price</Text>
-                  <Text style={{paddingHorizontal: 15}}>:</Text>
-                  <Text>{ConvertRupiah.convert(this.state.price)}</Text>
-                </ListItem>
-              </List>
-            </View>
-          </View>
-        </Content>
+          </Content>
+        </ScrollView>
       </Container>
     );
   }

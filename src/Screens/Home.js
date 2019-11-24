@@ -5,22 +5,26 @@ import {
   AsyncStorage,
   Linking,
   ToastAndroid,
+  RefreshControl,
 } from 'react-native';
 import {
   Container,
   Content,
   Text,
+  Badge,
   Input,
   Item,
   View,
   Spinner,
   Button,
+  Picker,
 } from 'native-base';
 import ListProduct from '../Components/ListProduct';
 import ListLatents from '../Components/ListLatents';
 import {connect} from 'react-redux';
 import {getMenu} from '../Public/Redux/Actions/Menu';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Cart from './Cart';
 
 class Home extends Component {
   constructor(props) {
@@ -29,9 +33,12 @@ class Home extends Component {
       data: [],
       cart: [],
       search: '',
+      sort: '',
+      type: '',
       total: 0,
       allPage: [],
       loading: true,
+      refresh: false,
     };
     this.handleCart = this.handleCart.bind(this);
   }
@@ -42,10 +49,22 @@ class Home extends Component {
     await this.props.dispatch(
       getMenu({
         search: this.state.search,
+        sort: this.state.sort,
+        type: this.state.type,
       }),
     );
     this.setState({data: this.props.data.menuList, loading: false});
   }
+  getSortASC = async value => {
+    let sort = value;
+    await this.setState({sort, type: 'ASC'});
+    return this.fetchData(sort, this.state.search);
+  };
+  getSortDESC = async value => {
+    let sort = value;
+    await this.setState({sort, type: 'DESC'});
+    return this.fetchData(sort, this.state.search);
+  };
 
   getSearch = async () => {
     let search = this.state.search;
@@ -82,7 +101,36 @@ class Home extends Component {
     );
   }
 
+  async addToCart() {
+    await this.props.navigation.navigate('Cart', {
+      cart: this.state.cart,
+    });
+    await this.setState({
+      cart: [],
+    });
+  }
+  async handleCancel() {
+    await this.setState({
+      cart: [],
+    });
+    ToastAndroid.show('Cancle Checkout', ToastAndroid.TOP, ToastAndroid.SHORT);
+    try {
+      await AsyncStorage.removeItem('cart');
+      return true;
+    } catch (exception) {
+      return false;
+    }
+  }
+  _onRefresh = () => {
+    this.setState({refresh: true});
+    this.fetchData().then(() =>
+      this.setState({
+        refresh: false,
+      }),
+    );
+  };
   render() {
+    console.log(this.state.sort);
     return (
       <Container>
         <View style={styles.body}>
@@ -100,14 +148,11 @@ class Home extends Component {
             />
           </Item>
           <View style={styles.viewButtonCart}>
-            <Button
-              transparent
-              onPress={() =>
-                this.props.navigation.navigate('Cart', {
-                  cart: this.state.cart,
-                })
-              }>
+            <Button transparent onPress={() => this.addToCart()}>
               <Icon name="ios-cart" size={35} style={styles.icon} />
+              <Badge info style={{top: -10}}>
+                <Text>{this.state.cart.length}</Text>
+              </Badge>
             </Button>
           </View>
           <View style={styles.viewButtonCS}>
@@ -123,14 +168,59 @@ class Home extends Component {
           </View>
         </View>
 
-        <ScrollView>
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refresh}
+              onRefresh={this._onRefresh}
+            />
+          }>
           <Content style={{width: '100%'}}>
             <View>
-              <ListLatents {...this.props} />
+              <ListLatents
+                {...this.props}
+                product={this.state.data}
+                sort={this.state.sort}
+                type={this.state.type}
+              />
             </View>
           </Content>
           <Content>
-            {this.state.loading ? (
+            <View style={{flexDirection: 'row'}}>
+              <Text style={{paddingVertical: 15, paddingHorizontal: 16}}>
+                ASC :
+              </Text>
+              <View style={{width: 120}}>
+                <Picker
+                  mode="dropdown"
+                  placeholder="Sort"
+                  iosIcon={<Icon name="ios-arrow-dropup" />}
+                  style={{width: undefined}}
+                  selectedValue={this.state.sort}
+                  onValueChange={this.getSortASC.bind(this)}>
+                  <Picker.Item label="Name" value="name" />
+                  <Picker.Item label="Price" value="Price" />
+                  <Picker.Item label="Newest" value="created_at" />
+                </Picker>
+              </View>
+              <Text style={{paddingVertical: 15, paddingHorizontal: 16}}>
+                DESC :
+              </Text>
+              <View style={{width: 120}}>
+                <Picker
+                  mode="dropdown"
+                  placeholder="Sort"
+                  iosIcon={<Icon name="ios-arrow-dropdown" />}
+                  style={{width: undefined}}
+                  selectedValue={this.state.sort}
+                  onValueChange={this.getSortDESC.bind(this)}>
+                  <Picker.Item label="Name" value="name" />
+                  <Picker.Item label="Price" value="Price" />
+                  <Picker.Item label="Latest" value="created_at" />
+                </Picker>
+              </View>
+            </View>
+            {this.state.loading === true ? (
               <Spinner color="red" />
             ) : (
               <View>
@@ -173,7 +263,7 @@ const styles = StyleSheet.create({
   },
   viewButtonCart: {
     position: 'absolute',
-    right: 70,
+    right: 50,
     paddingVertical: 10,
   },
   viewButtonCS: {

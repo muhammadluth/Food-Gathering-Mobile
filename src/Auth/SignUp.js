@@ -13,6 +13,7 @@ import {
   Title,
   Button,
   Text,
+  Spinner,
 } from 'native-base';
 import Http from '../Public/Utils/Http';
 import PasswordInputText from 'react-native-hide-show-password-input';
@@ -24,6 +25,7 @@ export default class SignUp extends Component {
       username: '',
       email: '',
       password: '',
+      loading: false,
     };
     this.handleSignUp = this.handleSignUp.bind(this);
   }
@@ -31,6 +33,7 @@ export default class SignUp extends Component {
     const usernames = this.state.username;
     const emails = this.state.email;
     const passwords = this.state.password;
+    this.setState({loading: true});
 
     Http.post(`/api/v1/users/register`, {
       username: usernames,
@@ -38,20 +41,23 @@ export default class SignUp extends Component {
       password: passwords,
     })
       .then(res => {
+        this.setState({loading: false});
         console.log(res);
         ToastAndroid.show(
-          'Registration Success',
+          'Registations Success',
           ToastAndroid.TOP,
           ToastAndroid.SHORT,
         );
         this.props.navigation.navigate('Login');
       })
       .catch(err => {
+        this.setState({loading: false});
         console.log(err);
-        alert('Registrations Failed');
+        alert('Registration Failed, Because Duplicate Email');
       });
   }
   render() {
+    console.log(this.state);
     return (
       <Container>
         <LinearGradient
@@ -76,6 +82,7 @@ export default class SignUp extends Component {
                       <Input
                         onChangeText={Text => this.setState({username: Text})}
                         value={this.state.username}
+                        placeholder="example123"
                         keyboardType="web-search"
                         autoCapitalize="none"
                       />
@@ -85,6 +92,7 @@ export default class SignUp extends Component {
                       <Input
                         onChangeText={Text => this.setState({email: Text})}
                         value={this.state.email}
+                        placeholder="example@gmail.com"
                         keyboardType="email-address"
                         autoCapitalize="none"
                       />
@@ -97,9 +105,13 @@ export default class SignUp extends Component {
                   <View style={styles.ViewButton}>
                     <View style={styles.Button}>
                       <Button
-                        style={{borderRadius: 10}}
+                        style={{borderRadius: 10, backgroundColor: '#ff4757'}}
                         onPress={() => this.handleSignUp()}>
-                        <Text>Sign Up</Text>
+                        {this.state.loading === true ? (
+                          <Spinner color="#fff" style={{width: '100%'}} />
+                        ) : (
+                          <Text>Sign Up</Text>
+                        )}
                       </Button>
                     </View>
                   </View>

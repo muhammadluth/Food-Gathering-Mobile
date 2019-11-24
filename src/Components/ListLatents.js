@@ -14,7 +14,6 @@ export default class ListLatents extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [],
       updated: [],
     };
   }
@@ -30,8 +29,10 @@ export default class ListLatents extends Component {
       })
       .catch(err => {
         console.log(err);
+        alert('Error,Viewing Data');
       });
   };
+
   render() {
     const ListLatents = this.state.updated;
     return (
