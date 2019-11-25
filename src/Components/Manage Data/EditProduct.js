@@ -88,12 +88,9 @@ class EditProduct extends Component {
     pd.append('category_id', category);
     pd.append('price', price);
     pd.append('qty', qty);
-
-    console.log(pd);
     await Http.put(`/api/v1/product/${id}`, pd)
       .then(result => {
         this.setState({loading: false});
-        console.log(result);
         ToastAndroid.show(
           'Success Edit Data',
           ToastAndroid.TOP,
@@ -108,7 +105,6 @@ class EditProduct extends Component {
       });
   };
   render() {
-    console.log(this.props.navigation.getParam('id'));
     return (
       <Container>
         <View>
@@ -120,20 +116,14 @@ class EditProduct extends Component {
           </View>
           <View>
             <Form>
-              <View style={{margin: 20}}>
-                <Card style={{padding: 30, borderRadius: 10}}>
+              <View style={styles.viewForm}>
+                <Card style={styles.cardForm}>
                   <View style={{alignItems: 'center'}}>
                     {this.state.isUpload === true ? (
                       <Button
                         bordered
                         disabled
-                        style={{
-                          borderColor: '#ff4757',
-                          width: 65,
-                          height: 65,
-                          justifyContent: 'center',
-                          borderRadius: 10,
-                        }}
+                        style={styles.buttonChosePhoto}
                         onPress={() => this.handleChoosePhoto()}>
                         <Icon
                           type="Ionicons"
@@ -144,13 +134,7 @@ class EditProduct extends Component {
                     ) : (
                       <Button
                         bordered
-                        style={{
-                          borderColor: '#ff4757',
-                          width: 65,
-                          height: 65,
-                          justifyContent: 'center',
-                          borderRadius: 10,
-                        }}
+                        style={styles.buttonChosePhoto}
                         onPress={() => this.handleChoosePhoto()}>
                         <Icon type="Ionicons" name="add" />
                       </Button>
@@ -255,6 +239,20 @@ const styles = StyleSheet.create({
     borderColor: '#000',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  viewForm: {
+    margin: 20,
+  },
+  cardForm: {
+    padding: 30,
+    borderRadius: 10,
+  },
+  buttonChosePhoto: {
+    borderColor: '#ff4757',
+    width: 65,
+    height: 65,
+    justifyContent: 'center',
+    borderRadius: 10,
   },
 });
 

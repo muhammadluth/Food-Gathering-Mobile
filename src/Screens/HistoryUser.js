@@ -1,10 +1,6 @@
 import React, {Component} from 'react';
-import {
-  StyleSheet,
-  AsyncStorage,
-  ScrollView,
-  RefreshControl,
-} from 'react-native';
+import {StyleSheet, ScrollView, RefreshControl} from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import {
   Container,
   Content,
@@ -40,9 +36,7 @@ export default class HistoryUser extends Component {
       const value = await AsyncStorage.getItem('user');
       if (value !== null) {
         this.setState({user: value});
-        console.log(value);
       }
-      console.log(value);
     } catch (error) {
       console.log(error);
     }
@@ -72,7 +66,6 @@ export default class HistoryUser extends Component {
       });
   };
   render() {
-    console.log(this.state.data);
     return (
       <Container>
         <Header {...this.props} />
@@ -103,10 +96,10 @@ export default class HistoryUser extends Component {
                   </Picker>
                 </View>
               </ListItem>
-              <View style={{position: 'absolute', top: 60, left: 20}}>
+              <View style={styles.viewUser}>
                 <Text>{this.state.user}</Text>
               </View>
-              <View style={{marginTop: 10}}>
+              <View style={styles.viewList}>
                 <List style={{backgroundColor: '#ff4757'}}>
                   <ListItem>
                     <Row>
@@ -136,22 +129,22 @@ export default class HistoryUser extends Component {
                           <ListItem>
                             <Row>
                               <Col style={{borderColor: '#000'}}>
-                                <Text style={{fontSize: 12}}>
+                                <Text style={styles.textRow}>
                                   #{item.invoices}
                                 </Text>
                               </Col>
                               <Col>
-                                <Text style={{fontSize: 12}}>
+                                <Text style={styles.textRow}>
                                   {item.datenow}
                                 </Text>
                               </Col>
                               <Col>
-                                <Text style={{fontSize: 12}}>
+                                <Text style={styles.textRow}>
                                   {item.orders}
                                 </Text>
                               </Col>
                               <Col>
-                                <Text style={{fontSize: 12}}>
+                                <Text style={styles.textRow}>
                                   {ConvertRupiah.convert(item.amount)}
                                 </Text>
                               </Col>
@@ -182,21 +175,20 @@ const styles = StyleSheet.create({
     right: 0,
     top: 6,
   },
-  TextProduct: {
-    paddingHorizontal: 10,
-    paddingTop: 10,
-  },
-  TextDate: {
-    flexDirection: 'row',
-  },
-  TextTitikDua: {
-    paddingHorizontal: 10,
-  },
-  TextTotal: {
-    marginVertical: 10,
-  },
+
   TextList: {
     fontSize: 13,
     color: '#fff',
+  },
+  viewUser: {
+    position: 'absolute',
+    top: 60,
+    left: 20,
+  },
+  textRow: {
+    fontSize: 12,
+  },
+  viewList: {
+    marginTop: 10,
   },
 });

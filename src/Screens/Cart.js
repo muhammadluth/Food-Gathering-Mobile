@@ -15,11 +15,11 @@ import {
 } from 'native-base';
 import {
   StyleSheet,
-  AsyncStorage,
   ToastAndroid,
   RefreshControl,
   ScrollView,
 } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import Header from '../Components/Header';
 import ConvertRupiah from 'rupiah-format';
 import Http from '../Public/Utils/Http';
@@ -51,9 +51,7 @@ export default class Cart extends Component {
           token: token,
           email: email,
         });
-        console.log(value);
       }
-      console.log(value);
     } catch (error) {
       console.log(error);
     }
@@ -71,7 +69,6 @@ export default class Cart extends Component {
     let cashier = await this.state.user;
     let receipt = Math.floor(Math.random() * 10000);
     this.state.cart.map((item, index) => {
-      console.log(item.name);
       Http.post(`/api/v1/order/`, {
         invoices: receipt,
         user: cashier,
@@ -110,7 +107,6 @@ export default class Cart extends Component {
     }
   }
   render() {
-    console.log(this.state.cart);
     if (this.state.cart) {
       var ListCart = this.state.cart.map(item => {
         return (
@@ -127,11 +123,10 @@ export default class Cart extends Component {
                 Price :{ConvertRupiah.convert(item.price * item.qty)}
               </Text>
             </Body>
-            <Right style={{marginTop: 10}}>
+            <Right style={styles.qty}>
               <Body>
                 <Button
                   success
-                  href="#"
                   small
                   onPress={() =>
                     item.qty >= item.count ? this.false : (item.qty += 1)
@@ -140,14 +135,14 @@ export default class Cart extends Component {
                 </Button>
               </Body>
             </Right>
-            <Right style={{marginTop: 15}}>
+            <Right style={styles.qty}>
               <Body>
                 <Badge info>
                   <Text>{item.qty}</Text>
                 </Badge>
               </Body>
             </Right>
-            <Right style={{marginTop: 10}}>
+            <Right style={styles.qty}>
               <Body>
                 <Button
                   danger
@@ -176,12 +171,14 @@ export default class Cart extends Component {
             <Header {...this.props} />
           </View>
           <Content>{ListCart}</Content>
+          <View style={styles.viewText}>
+            <Text style={{textAlign: 'center', color: '#dfe4ea'}}>
+              Pull for Refresh Page
+            </Text>
+          </View>
           <View>
-            <View>
-              <Text style={{textAlign: 'center'}}>Pull for Refresh Page</Text>
-            </View>
-            <View style={{margin: 20}}>
-              <Text style={{marginBottom: 10, fontWeight: 'bold'}}>
+            <View style={styles.viewTotal}>
+              <Text style={styles.textTotal}>
                 TOTAL :
                 {ConvertRupiah.convert(
                   this.state.cart.reduce((a, c) => a + c.price * c.qty, 0),
@@ -190,7 +187,7 @@ export default class Cart extends Component {
               <Text>Belum termasuk PPN</Text>
             </View>
 
-            <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+            <View style={styles.viewCheckout}>
               <Button
                 danger
                 style={styles.buttonCheckout}
@@ -198,7 +195,7 @@ export default class Cart extends Component {
                 <Text>Cancel</Text>
               </Button>
               <Button
-                success
+                info
                 style={styles.buttonCheckout}
                 onPress={() => this.handleCheckOut()}>
                 <Text>Checkout</Text>
@@ -211,24 +208,6 @@ export default class Cart extends Component {
   }
 }
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 24,
-    margin: 18,
-    fontFamily: 'GothamRounded-Bold',
-    fontWeight: 'bold',
-    color: '#ff4757',
-  },
-  text: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginTop: 20,
-    marginBottom: 20,
-    textDecorationLine: 'underline',
-  },
-  icons: {
-    margin: 20,
-  },
   buttonCheckout: {
     width: 110,
     marginRight: 5,
@@ -236,5 +215,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     bottom: 10,
     borderRadius: 20,
+  },
+  viewCheckout: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  qty: {
+    paddingTop: 30,
+    fontSize: 11,
+    marginHorizontal: -5,
+  },
+  viewText: {
+    position: 'absolute',
+    bottom: 300,
+    top: 300,
+    left: 100,
+    right: 100,
+  },
+  textTotal: {
+    marginBottom: 10,
+    fontWeight: 'bold',
+  },
+  viewTotal: {
+    margin: 20,
   },
 });

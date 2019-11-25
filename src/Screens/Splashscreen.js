@@ -1,11 +1,7 @@
 import React, {Component} from 'react';
 import {View, Container, Card} from 'native-base';
-import {
-  ImageBackground,
-  StyleSheet,
-  Dimensions,
-  AsyncStorage,
-} from 'react-native';
+import {ImageBackground, StyleSheet, Dimensions} from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import LinearGradient from 'react-native-linear-gradient';
 export default class Splashscreen extends Component {
   constructor(props) {

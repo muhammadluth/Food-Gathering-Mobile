@@ -10,15 +10,15 @@ import {
   List,
   ListItem,
   Picker,
+  Row,
+  Col,
 } from 'native-base';
-import {Grid, Row, Col} from 'react-native-easy-grid';
 import {StyleSheet, Dimensions, ScrollView, RefreshControl} from 'react-native';
 import ConvertRupiah from 'rupiah-format';
-import {API_BASEURL} from 'react-native-dotenv';
 import Http from '../Public/Utils/Http';
 import Header from './Header';
 
-class History extends React.Component {
+export default class History extends React.Component {
   constructor(props) {
     super();
     this.state = {
@@ -98,158 +98,141 @@ class History extends React.Component {
 
   render() {
     this.state.recentOrder.map(item => {});
-    // card if nul
     if (this.state.count === null) {
       this.state.count = 0;
     }
 
     return (
-      <>
-        <Container>
-          <Header {...this.props} />
-          <ScrollView
-            refreshControl={
-              <RefreshControl
-                refreshing={this.state.refresh}
-                onRefresh={this._onRefresh}
-              />
-            }>
-            <Content>
-              <View style={styles.viewAll}>
-                <Text style={styles.text}>ALL ORDER</Text>
+      <Container>
+        <Header {...this.props} />
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refresh}
+              onRefresh={this._onRefresh}
+            />
+          }>
+          <Content>
+            <View style={styles.viewAll}>
+              <Text style={styles.text}>ALL ORDER</Text>
 
-                <View style={{flexDirection: 'row'}}>
-                  <View style={styles.ViewCard}>
-                    <Card style={styles.card}>
-                      <Text style={styles.textCard}>Today's Income</Text>
-                      <Text style={styles.textCard}>
-                        {ConvertRupiah.convert(this.state.count)}
-                      </Text>
-                      <Text style={styles.textCard}>
-                        {this.state.growth}% Yesterday
-                      </Text>
-                    </Card>
-                  </View>
-                  <View style={styles.ViewCard}>
-                    <Card style={styles.card}>
-                      <Text style={styles.textCard}>Orders</Text>
-                      <Text style={styles.textCard}>{this.state.orders}</Text>
-                      <Text style={styles.textCard}>
-                        {this.state.growthOrdeWeek}% Last Week
-                      </Text>
-                    </Card>
-                  </View>
-                  <View style={styles.ViewCard}>
-                    <Card style={styles.card}>
-                      <Text style={styles.textCard}>This Year's Income</Text>
-                      <Text style={styles.textCard}>
-                        {ConvertRupiah.convert(this.state.resYearIncome)}
-                      </Text>
-                      <Text style={styles.textCard}>
-                        {this.state.yearCount}% Last Year
-                      </Text>
-                    </Card>
-                  </View>
+              <View style={{flexDirection: 'row'}}>
+                <View style={styles.ViewCard}>
+                  <Card style={styles.card}>
+                    <Text style={styles.textCard}>Today's Income</Text>
+                    <Text style={styles.textCard}>
+                      {ConvertRupiah.convert(this.state.count)}
+                    </Text>
+                    <Text style={styles.textCard}>
+                      {this.state.growth}% Yesterday
+                    </Text>
+                  </Card>
+                </View>
+                <View style={styles.ViewCard}>
+                  <Card style={styles.card}>
+                    <Text style={styles.textCard}>Orders</Text>
+                    <Text style={styles.textCard}>{this.state.orders}</Text>
+                    <Text style={styles.textCard}>
+                      {this.state.growthOrdeWeek}% Last Week
+                    </Text>
+                  </Card>
+                </View>
+                <View style={styles.ViewCard}>
+                  <Card style={styles.card}>
+                    <Text style={styles.textCard}>This Year's Income</Text>
+                    <Text style={styles.textCard}>
+                      {ConvertRupiah.convert(this.state.resYearIncome)}
+                    </Text>
+                    <Text style={styles.textCard}>
+                      {this.state.yearCount}% Last Year
+                    </Text>
+                  </Card>
                 </View>
               </View>
-              <ScrollView>
-                <View style={{marginTop: 20}}>
-                  <Text style={styles.text}>RECENT ORDER</Text>
-                  <View style={styles.ViewPicker}>
-                    <Picker
-                      mode="dropdown"
-                      iosHeader="Select your SIM"
-                      iosIcon={<Icon name="arrow-down" />}
-                      style={{width: undefined}}
-                      selectedValue={this.state.recentdata}
-                      onValueChange={this.getRecentOrder.bind(this)}>
-                      <Picker.Item label="Day" value="day" />
-                      <Picker.Item label="Month" value="month" />
-                      <Picker.Item label="Year" value="year" />
-                    </Picker>
-                  </View>
-                  <View style={{marginVertical: 20}}>
-                    <List style={{backgroundColor: '#ff4757'}}>
-                      <ListItem>
-                        <Row>
-                          <Col>
-                            <Text style={styles.TextList}>INVOICES</Text>
-                          </Col>
-                          <Col>
-                            <Text style={styles.TextList}>USER</Text>
-                          </Col>
-                          <Col>
-                            <Text style={styles.TextList}>DATE</Text>
-                          </Col>
-                          <Col>
-                            <Text style={styles.TextList}>ORDERS</Text>
-                          </Col>
-                          <Col>
-                            <Text style={styles.TextList}>AMOUNT</Text>
-                          </Col>
-                        </Row>
-                      </ListItem>
-                    </List>
-                    <List style={{backgroundColor: '#ecf0f1'}}>
-                      {this.state.recentOrder.map(item => {
-                        return (
-                          <ListItem>
-                            <Row>
-                              <Col style={{borderColor: '#000'}}>
-                                <Text style={{fontSize: 10}}>
-                                  #{item.invoices}
-                                </Text>
-                              </Col>
-                              <Col>
-                                <Text style={{fontSize: 10}}>{item.user}</Text>
-                              </Col>
-                              <Col>
-                                <Text style={{fontSize: 10}}>
-                                  {item.datenow}
-                                </Text>
-                              </Col>
-                              <Col>
-                                <Text style={{fontSize: 10}}>
-                                  {item.orders}
-                                </Text>
-                              </Col>
-                              <Col>
-                                <Text style={{fontSize: 10}}>
-                                  {ConvertRupiah.convert(item.amount)}
-                                </Text>
-                              </Col>
-                            </Row>
-                          </ListItem>
-                        );
-                      })}
-                    </List>
-                  </View>
+            </View>
+            <ScrollView>
+              <View style={styles.ViewRecent}>
+                <Text style={styles.text}>RECENT ORDER</Text>
+                <View style={styles.ViewPicker}>
+                  <Picker
+                    mode="dropdown"
+                    iosHeader="Select your SIM"
+                    iosIcon={<Icon name="arrow-down" />}
+                    style={{width: undefined}}
+                    selectedValue={this.state.recentdata}
+                    onValueChange={this.getRecentOrder.bind(this)}>
+                    <Picker.Item label="Day" value="day" />
+                    <Picker.Item label="Month" value="month" />
+                    <Picker.Item label="Year" value="year" />
+                  </Picker>
                 </View>
-              </ScrollView>
-            </Content>
-          </ScrollView>
-        </Container>
-      </>
+                <View style={{marginVertical: 20}}>
+                  <List style={{backgroundColor: '#ff4757'}}>
+                    <ListItem>
+                      <Row>
+                        <Col>
+                          <Text style={styles.TextList}>INVOICES</Text>
+                        </Col>
+                        <Col>
+                          <Text style={styles.TextList}>USER</Text>
+                        </Col>
+                        <Col>
+                          <Text style={styles.TextList}>DATE</Text>
+                        </Col>
+                        <Col>
+                          <Text style={styles.TextList}>ORDERS</Text>
+                        </Col>
+                        <Col>
+                          <Text style={styles.TextList}>AMOUNT</Text>
+                        </Col>
+                      </Row>
+                    </ListItem>
+                  </List>
+                  <List style={{backgroundColor: '#ecf0f1'}}>
+                    {this.state.recentOrder.map(item => {
+                      return (
+                        <ListItem>
+                          <Row>
+                            <Col style={{borderColor: '#000'}}>
+                              <Text style={styles.textRow}>
+                                #{item.invoices}
+                              </Text>
+                            </Col>
+                            <Col>
+                              <Text style={styles.textRow}>{item.user}</Text>
+                            </Col>
+                            <Col>
+                              <Text style={styles.textRow}>{item.datenow}</Text>
+                            </Col>
+                            <Col>
+                              <Text style={styles.textRow}>{item.orders}</Text>
+                            </Col>
+                            <Col>
+                              <Text style={styles.textRow}>
+                                {ConvertRupiah.convert(item.amount)}
+                              </Text>
+                            </Col>
+                          </Row>
+                        </ListItem>
+                      );
+                    })}
+                  </List>
+                </View>
+              </View>
+            </ScrollView>
+          </Content>
+        </ScrollView>
+      </Container>
     );
   }
 }
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 24,
-    margin: 18,
-    fontFamily: 'GothamRounded-Bold',
-    fontWeight: 'bold',
-    color: '#ff4757',
-  },
   text: {
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
     marginTop: 20,
     textDecorationLine: 'underline',
-  },
-  icons: {
-    margin: 20,
   },
   viewAll: {
     marginTop: 10,
@@ -283,6 +266,10 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#fff',
   },
+  textRow: {
+    fontSize: 10,
+  },
+  ViewRecent: {
+    marginTop: 20,
+  },
 });
-
-export default History;

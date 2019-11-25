@@ -2,11 +2,11 @@ import React, {Component} from 'react';
 import {
   StyleSheet,
   ScrollView,
-  AsyncStorage,
   Linking,
   ToastAndroid,
   RefreshControl,
 } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import {
   Container,
   Content,
@@ -24,8 +24,6 @@ import ListLatents from '../Components/ListLatents';
 import {connect} from 'react-redux';
 import {getMenu} from '../Public/Redux/Actions/Menu';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Cart from './Cart';
-
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -130,7 +128,6 @@ class Home extends Component {
     );
   };
   render() {
-    console.log(this.state.sort);
     return (
       <Container>
         <View style={styles.body}>
@@ -187,9 +184,7 @@ class Home extends Component {
           </Content>
           <Content>
             <View style={{flexDirection: 'row'}}>
-              <Text style={{paddingVertical: 15, paddingHorizontal: 16}}>
-                ASC :
-              </Text>
+              <Text style={styles.textSort}>ASC :</Text>
               <View style={{width: 120}}>
                 <Picker
                   mode="dropdown"
@@ -203,9 +198,7 @@ class Home extends Component {
                   <Picker.Item label="Newest" value="created_at" />
                 </Picker>
               </View>
-              <Text style={{paddingVertical: 15, paddingHorizontal: 16}}>
-                DESC :
-              </Text>
+              <Text style={styles.textSort}>DESC :</Text>
               <View style={{width: 120}}>
                 <Picker
                   mode="dropdown"
@@ -246,14 +239,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     marginLeft: 10,
   },
-  text: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginTop: 20,
-    marginBottom: 20,
-    textDecorationLine: 'underline',
-  },
   body: {
     flexDirection: 'row',
     backgroundColor: '#ff4757',
@@ -270,6 +255,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 15,
     paddingVertical: 12,
+  },
+  textSort: {
+    paddingVertical: 15,
+    paddingHorizontal: 16,
   },
 });
 const mapStateToProps = state => {

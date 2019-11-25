@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
-import {Container, View, Text, Picker, Icon} from 'native-base';
-import {StyleSheet, AsyncStorage, TouchableOpacity} from 'react-native';
+import {Container, View, Text, Icon} from 'native-base';
+import {StyleSheet, TouchableOpacity} from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import MapView, {Polyline, Marker, PROVIDER_GOOGLE} from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 
-class Maps extends Component {
+export default class Location extends Component {
   constructor(props) {
     super(props);
 
@@ -22,9 +23,7 @@ class Maps extends Component {
       const email = await AsyncStorage.getItem('email');
       if (value !== null) {
         this.setState({user: value, email: email});
-        console.log(value);
       }
-      console.log(value);
     } catch (error) {
       console.log(error);
     }
@@ -118,24 +117,7 @@ class Maps extends Component {
           )}
         </MapView>
         <View style={styles.ViewButton}>
-          {this.state.latitude === null && this.state.longitude === null ? (
-            <TouchableOpacity
-              onPress={alert('Please,Check Your Connection')}
-              style={{
-                alignItems: 'center',
-                paddingVertical: 10,
-                borderRadius: 20,
-              }}>
-              <View style={{flexDirection: 'row'}}>
-                <Icon
-                  type="Ionicons"
-                  name="ios-contact"
-                  style={{paddingHorizontal: 5}}
-                />
-                <Text style={{paddingVertical: 5}}>{this.state.user}</Text>
-              </View>
-            </TouchableOpacity>
-          ) : (
+          {this.state.latitude !== null && this.state.longitude !== null ? (
             <TouchableOpacity
               onPress={() => {
                 ZoomIn.fitToCoordinates(
@@ -150,18 +132,23 @@ class Maps extends Component {
                   },
                 );
               }}
+              style={styles.touch}>
+              <View style={{flexDirection: 'row'}}>
+                <Icon type="Ionicons" name="ios-contact" style={styles.icon} />
+                <Text style={styles.textUser}>{this.state.user}</Text>
+              </View>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={alert('Please,Check Your Connection')}
               style={{
                 alignItems: 'center',
                 paddingVertical: 10,
                 borderRadius: 20,
               }}>
               <View style={{flexDirection: 'row'}}>
-                <Icon
-                  type="Ionicons"
-                  name="ios-contact"
-                  style={{paddingHorizontal: 5}}
-                />
-                <Text style={{paddingVertical: 5}}>{this.state.user}</Text>
+                <Icon type="Ionicons" name="ios-contact" style={styles.icon} />
+                <Text style={styles.textUser}>{this.state.user}</Text>
               </View>
             </TouchableOpacity>
           )}
@@ -186,6 +173,15 @@ const styles = StyleSheet.create({
     left: 0,
     bottom: 0,
   },
+  touch: {
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderRadius: 20,
+  },
+  textUser: {
+    paddingVertical: 5,
+  },
+  icon: {
+    paddingHorizontal: 5,
+  },
 });
-
-export default Maps;

@@ -25,10 +25,10 @@ export default class Details extends Component {
       id: '',
       product: '',
       image: '',
-      price: '', //
+      price: '',
       category: '',
-      description: '', //
-      quantity: '', //
+      description: '',
+      quantity: '',
     };
   }
   componentDidMount() {
@@ -39,10 +39,10 @@ export default class Details extends Component {
       id: this.props.navigation.getParam('id'),
       product: this.props.navigation.getParam('product'),
       image: this.props.navigation.getParam('image'),
-      price: this.props.navigation.getParam('price'), //
+      price: this.props.navigation.getParam('price'),
       category: this.props.navigation.getParam('category'),
-      description: this.props.navigation.getParam('description'), //
-      quantity: this.props.navigation.getParam('quantity'), //
+      description: this.props.navigation.getParam('description'),
+      quantity: this.props.navigation.getParam('quantity'),
     });
   }
   _onRefresh = () => {
@@ -92,12 +92,12 @@ export default class Details extends Component {
                   </ListItem>
                   <ListItem itemDivider>
                     <Text>Stock</Text>
-                    <Text style={{paddingHorizontal: 10}}>:</Text>
+                    <Text style={styles.textqty}>:</Text>
                     <Text>{this.state.quantity}</Text>
                   </ListItem>
                   <ListItem style={styles.ListDivider} itemDivider>
                     <Text>Price</Text>
-                    <Text style={{paddingHorizontal: 15}}>:</Text>
+                    <Text style={styles.textprice}>:</Text>
                     <Text>{ConvertRupiah.convert(this.state.price)}</Text>
                   </ListItem>
                 </List>
@@ -164,5 +164,11 @@ const styles = StyleSheet.create({
   },
   ListDivider: {
     marginVertical: 10,
+  },
+  textqty: {
+    paddingHorizontal: 10,
+  },
+  textprice: {
+    paddingHorizontal: 15,
   },
 });

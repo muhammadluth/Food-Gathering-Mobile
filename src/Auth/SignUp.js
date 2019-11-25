@@ -105,7 +105,7 @@ export default class SignUp extends Component {
                   <View style={styles.ViewButton}>
                     <View style={styles.Button}>
                       <Button
-                        style={{borderRadius: 10, backgroundColor: '#ff4757'}}
+                        style={styles.buttonSignUp}
                         onPress={() => this.handleSignUp()}>
                         {this.state.loading === true ? (
                           <Spinner color="#fff" style={{width: '100%'}} />
@@ -168,5 +168,9 @@ const styles = StyleSheet.create({
   logo: {
     width: 200,
     height: 200,
+  },
+  buttonSignUp: {
+    borderRadius: 10,
+    backgroundColor: '#ff4757',
   },
 });

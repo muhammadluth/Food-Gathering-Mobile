@@ -18,9 +18,10 @@ import {
   View,
   Spinner,
 } from 'native-base';
-import {AsyncStorage} from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import Header from '../Components/Header';
 import Http from '../Public/Utils/Http';
+import {ADMIN} from 'react-native-dotenv';
 
 export default class Menu extends Component {
   constructor(props) {
@@ -42,9 +43,7 @@ export default class Menu extends Component {
       const email = await AsyncStorage.getItem('email');
       if (value !== null) {
         this.setState({user: value, token: token, email: email});
-        console.log(value);
       }
-      console.log(value);
     } catch (error) {
       console.log(error);
     }
@@ -118,7 +117,7 @@ export default class Menu extends Component {
             </View>
             <ListItem icon>
               <Left>
-                {this.state.email !== 'muhammadluthfi059@gmail.com' ? (
+                {this.state.email !== `${ADMIN}` ? (
                   <Button
                     style={{backgroundColor: '#f69b31'}}
                     onPress={() => this.handleButtonManageFalse()}>
@@ -138,7 +137,7 @@ export default class Menu extends Component {
             </ListItem>
             <ListItem icon>
               <Left>
-                {this.state.email !== 'muhammadluthfi059@gmail.com' ? (
+                {this.state.email !== `${ADMIN}` ? (
                   <Button
                     style={{backgroundColor: '#67baf6'}}
                     onPress={() => this.handleButtonHistoryFalse()}>
@@ -173,24 +172,6 @@ export default class Menu extends Component {
   }
 }
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 24,
-    margin: 18,
-    fontFamily: 'GothamRounded-Bold',
-    fontWeight: 'bold',
-    color: '#ff4757',
-  },
-  text: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginTop: 20,
-    marginBottom: 20,
-    textDecorationLine: 'underline',
-  },
-  icons: {
-    margin: 20,
-  },
   imageProfile: {
     width: 120,
     height: 120,

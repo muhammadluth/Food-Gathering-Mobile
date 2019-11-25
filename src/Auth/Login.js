@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, Image, AsyncStorage, ToastAndroid} from 'react-native';
+import {StyleSheet, Image, ToastAndroid} from 'react-native';
 import {
   Container,
   Header,
@@ -18,6 +18,7 @@ import {
 import Http from '../Public/Utils/Http';
 import PasswordInputText from 'react-native-hide-show-password-input';
 import LinearGradient from 'react-native-linear-gradient';
+import AsyncStorage from '@react-native-community/async-storage';
 export default class Login extends Component {
   constructor(props) {
     super(props);
@@ -75,7 +76,7 @@ export default class Login extends Component {
               />
             </View>
             <View style={styles.Card}>
-              <Card style={{borderRadius: 20}}>
+              <Card style={styles.cardLogin}>
                 <View>
                   <Title style={styles.ViewTitle}>Login</Title>
                 </View>
@@ -99,7 +100,7 @@ export default class Login extends Component {
                   <View style={styles.ViewButton}>
                     <View style={styles.Button}>
                       <Button
-                        style={{borderRadius: 10, backgroundColor: '#ff4757'}}
+                        style={styles.buttonLogin}
                         onPress={() => this.handleLogin()}>
                         {this.state.loading === true ? (
                           <Spinner color="#fff" style={{width: '100%'}} />
@@ -111,7 +112,7 @@ export default class Login extends Component {
                     <View style={styles.Button}>
                       <Button
                         bordered
-                        style={{borderRadius: 10, borderColor: '#ff4757'}}
+                        style={styles.buttonSignUp}
                         onPress={() =>
                           this.props.navigation.navigate('SignUp')
                         }>
@@ -176,5 +177,16 @@ const styles = StyleSheet.create({
   logo: {
     width: 200,
     height: 200,
+  },
+  cardLogin: {
+    borderRadius: 20,
+  },
+  buttonLogin: {
+    borderRadius: 10,
+    backgroundColor: '#ff4757',
+  },
+  buttonSignUp: {
+    borderRadius: 10,
+    borderColor: '#ff4757',
   },
 });

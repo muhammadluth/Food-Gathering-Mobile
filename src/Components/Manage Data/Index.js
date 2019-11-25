@@ -11,12 +11,10 @@ import {
   Body,
   List,
   Thumbnail,
-  Right,
   Spinner,
 } from 'native-base';
 import {
   StyleSheet,
-  AsyncStorage,
   ToastAndroid,
   ScrollView,
   RefreshControl,
@@ -76,7 +74,6 @@ class Index extends Component {
   };
 
   render() {
-    AsyncStorage.getItem('token').then(res => console.log(res));
     return (
       <Container>
         <View>

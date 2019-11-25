@@ -8,7 +8,7 @@ export default class Headers extends Component {
     return (
       <Header style={styles.header}>
         <View style={styles.viewIcon}>
-          <Button transparent style={{width: 30}}>
+          <Button transparent style={styles.button}>
             <Icon
               size={25}
               name="ios-arrow-back"
@@ -40,5 +40,8 @@ const styles = StyleSheet.create({
     left: 0,
     marginTop: 7,
     marginLeft: 25,
+  },
+  button: {
+    width: 30,
   },
 });
