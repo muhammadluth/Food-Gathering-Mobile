@@ -37,10 +37,14 @@ export default class Cart extends Component {
       email: '',
       token: '',
       refresh: false,
+      refreshing: false,
     };
   }
   async componentDidMount() {
     this.handleData();
+    this.onRefresh();
+    this._onRefresh();
+    setInterval(this.onRefresh, 500);
     try {
       const value = await AsyncStorage.getItem('user');
       const token = await AsyncStorage.getItem('token');
@@ -57,6 +61,10 @@ export default class Cart extends Component {
     }
   }
   _onRefresh = () => {
+    this.setState({refreshing: true});
+    this.setState({refreshing: false});
+  };
+  onRefresh = () => {
     this.setState({refresh: true});
     this.setState({
       refresh: false,
@@ -125,12 +133,7 @@ export default class Cart extends Component {
             </Body>
             <Right style={styles.qty}>
               <Body>
-                <Button
-                  success
-                  small
-                  onPress={() =>
-                    item.qty >= item.count ? this.false : (item.qty += 1)
-                  }>
+                <Button success small onPress={() => (item.qty += 1)}>
                   <Icon name="ios-add" />
                 </Button>
               </Body>
@@ -147,9 +150,7 @@ export default class Cart extends Component {
                 <Button
                   danger
                   small
-                  onPress={() =>
-                    item.qty <= 0 ? this.false : (item.qty -= 1)
-                  }>
+                  onPress={() => (item.qty <= 0 ? null : (item.qty -= 1))}>
                   <Icon name="ios-remove" />
                 </Button>
               </Body>
@@ -162,11 +163,12 @@ export default class Cart extends Component {
       <ScrollView
         refreshControl={
           <RefreshControl
-            refreshing={this.state.refresh}
+            refreshing={this.state.refreshing}
             onRefresh={this._onRefresh}
           />
         }>
         <Container>
+          <RefreshControl onRefresh={this.onRefresh} />
           <View>
             <Header {...this.props} />
           </View>

@@ -188,35 +188,42 @@ export default class History extends React.Component {
                       </Row>
                     </ListItem>
                   </List>
-                  <List style={{backgroundColor: '#ecf0f1'}}>
-                    {this.state.recentOrder.map(item => {
-                      return (
-                        <ListItem>
-                          <Row>
-                            <Col style={{borderColor: '#000'}}>
-                              <Text style={styles.textRow}>
-                                #{item.invoices}
-                              </Text>
-                            </Col>
-                            <Col>
-                              <Text style={styles.textRow}>{item.user}</Text>
-                            </Col>
-                            <Col>
-                              <Text style={styles.textRow}>{item.datenow}</Text>
-                            </Col>
-                            <Col>
-                              <Text style={styles.textRow}>{item.orders}</Text>
-                            </Col>
-                            <Col>
-                              <Text style={styles.textRow}>
-                                {ConvertRupiah.convert(item.amount)}
-                              </Text>
-                            </Col>
-                          </Row>
-                        </ListItem>
-                      );
-                    })}
-                  </List>
+                  <ScrollView>
+                    <List style={{backgroundColor: '#ecf0f1'}}>
+                      {this.state.recentOrder.map(item => {
+                        console.log(this.state.recentOrder);
+                        return (
+                          <ListItem>
+                            <Row>
+                              <Col style={{borderColor: '#000'}}>
+                                <Text style={styles.textRow}>
+                                  #{item.invoices}
+                                </Text>
+                              </Col>
+                              <Col>
+                                <Text style={styles.textRow}>{item.user}</Text>
+                              </Col>
+                              <Col>
+                                <Text style={styles.textRow}>
+                                  {item.datenow}
+                                </Text>
+                              </Col>
+                              <Col>
+                                <Text style={styles.textRow}>
+                                  {item.orders}
+                                </Text>
+                              </Col>
+                              <Col>
+                                <Text style={styles.textRow}>
+                                  {ConvertRupiah.convert(item.amount)}
+                                </Text>
+                              </Col>
+                            </Row>
+                          </ListItem>
+                        );
+                      })}
+                    </List>
+                  </ScrollView>
                 </View>
               </View>
             </ScrollView>

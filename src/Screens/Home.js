@@ -234,14 +234,14 @@ const styles = StyleSheet.create({
   searchBar: {
     width: 250,
     height: 35,
-    marginVertical: 12,
     borderColor: '#fff',
     backgroundColor: '#fff',
-    marginLeft: 10,
   },
   body: {
     flexDirection: 'row',
     backgroundColor: '#ff4757',
+    padding: 12,
+    justifyContent: 'flex-start',
   },
   icon: {
     color: '#fff',
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
   viewButtonCS: {
     position: 'absolute',
     right: 15,
-    paddingVertical: 12,
+    paddingVertical: 10,
   },
   textSort: {
     paddingVertical: 15,

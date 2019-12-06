@@ -16,7 +16,6 @@ import ManageData from './Components/Manage Data/Index';
 import AddData from './Components/Manage Data/AddProduct';
 import EditData from './Components/Manage Data/EditProduct';
 import Menu from './Screens/Menu';
-import Locations from './Screens/Location';
 
 const MainNavigator = createStackNavigator(
   {
@@ -29,7 +28,6 @@ const MainNavigator = createStackNavigator(
     ManageData: {screen: ManageData},
     AddData: {screen: AddData},
     EditData: {screen: EditData},
-
     Index: createMaterialBottomTabNavigator({
       Home: {
         screen: Home,
@@ -40,9 +38,9 @@ const MainNavigator = createStackNavigator(
               <Icon style={[{color: tintColor}]} size={25} name={'ios-home'} />
             </View>
           ),
-          activeColor: '#f0edf6',
-          inactiveColor: '#226557',
-          barStyle: {backgroundColor: '#ff4757'},
+          activeColor: '#ff4757',
+          inactiveColor: '#bdc3c7',
+          barStyle: {backgroundColor: '#fff'},
         },
       },
 
@@ -55,23 +53,9 @@ const MainNavigator = createStackNavigator(
               <Icon style={[{color: tintColor}]} size={25} name={'ios-paper'} />
             </View>
           ),
-          activeColor: '#f0edf6',
-          inactiveColor: '#226557',
-          barStyle: {backgroundColor: '#ff4757'},
-        },
-      },
-      Location: {
-        screen: Locations,
-        navigationOptions: {
-          tabBarLabel: 'Maps',
-          tabBarIcon: ({tintColor}) => (
-            <View>
-              <Icon style={[{color: tintColor}]} size={25} name={'ios-pin'} />
-            </View>
-          ),
-          activeColor: '#f0edf6',
-          inactiveColor: '#226557',
-          barStyle: {backgroundColor: '#ff4757'},
+          activeColor: '#ff4757',
+          inactiveColor: '#bdc3c7',
+          barStyle: {backgroundColor: '#fff'},
         },
       },
       Menu: {
@@ -83,9 +67,9 @@ const MainNavigator = createStackNavigator(
               <Icon style={[{color: tintColor}]} size={25} name={'ios-menu'} />
             </View>
           ),
-          activeColor: '#f0edf6',
-          inactiveColor: '#226557',
-          barStyle: {backgroundColor: '#ff4757'},
+          activeColor: '#ff4757',
+          inactiveColor: '#bdc3c7',
+          barStyle: {backgroundColor: '#fff'},
         },
       },
     }),

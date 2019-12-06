@@ -21,7 +21,7 @@ export default class Splashscreen extends Component {
     }
     setTimeout(() => {
       if (this.state.token === null) {
-        this.props.navigation.navigate('Login');
+        this.props.navigation.replace('Login');
       }
     }, 2000);
   }
@@ -29,7 +29,7 @@ export default class Splashscreen extends Component {
     return (
       <Container>
         {this.state.token !== null ? (
-          this.props.navigation.navigate('Index')
+          this.props.navigation.replace('Index')
         ) : (
           <LinearGradient
             colors={['#ff4757', '#ff6b81', '#dfe4ea']}
@@ -59,7 +59,6 @@ const styles = StyleSheet.create({
   Logo: {
     width: 200,
     height: 200,
-    marginTop: -40,
   },
   linearGradient: {
     flex: 1,
@@ -69,6 +68,6 @@ const styles = StyleSheet.create({
   CardLogo: {
     height: 130,
     borderRadius: 10,
-    marginTop: -50,
+    justifyContent: 'center',
   },
 });

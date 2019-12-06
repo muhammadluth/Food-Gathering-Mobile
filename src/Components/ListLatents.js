@@ -4,11 +4,14 @@ import {
   ImageBackground,
   TouchableOpacity,
   ScrollView,
+  Dimensions,
 } from 'react-native';
 import {Card, Text, Button, View} from 'native-base';
 import Http from '../Public/Utils/Http';
 import ConvertRupiah from 'rupiah-format';
 import {API_BASEURL} from 'react-native-dotenv';
+const HEIGHT_DEVICE = Dimensions.get('window').height;
+const WIDTH_DEVICE = Dimensions.get('window').width;
 
 export default class ListLatents extends Component {
   constructor(props) {
@@ -40,8 +43,9 @@ export default class ListLatents extends Component {
         horizontal={true}
         pagingEnabled={true}
         showsHorizontalScrollIndicator={false}>
-        {ListLatents.map(item => (
+        {ListLatents.slice(0, 5).map(item => (
           <TouchableOpacity
+            key={item.id}
             onPress={() =>
               this.props.navigation.navigate('Details', {
                 id: item.id,
@@ -54,19 +58,17 @@ export default class ListLatents extends Component {
               })
             }>
             <View style={styles.View}>
-              <Card style={styles.cardView}>
-                <ImageBackground
-                  source={{uri: `${API_BASEURL}/` + item.image}}
-                  style={{height: '100%', width: '100%'}}>
-                  <View style={styles.viewOverlay}>
-                    <Text style={styles.textProduct}>{item.name}</Text>
-                    <Text style={styles.cardPrice}>
-                      {ConvertRupiah.convert(item.price)}
-                    </Text>
-                    <Text style={styles.textCategory}>{item.category}</Text>
-                  </View>
-                </ImageBackground>
-              </Card>
+              <ImageBackground
+                source={{uri: `${API_BASEURL}/` + item.image}}
+                style={styles.banner}>
+                <View style={styles.viewOverlay}>
+                  <Text style={styles.textProduct}>{item.name}</Text>
+                  <Text style={styles.cardPrice}>
+                    {ConvertRupiah.convert(item.price)}
+                  </Text>
+                  <Text style={styles.textCategory}>{item.category}</Text>
+                </View>
+              </ImageBackground>
             </View>
           </TouchableOpacity>
         ))}
@@ -76,20 +78,12 @@ export default class ListLatents extends Component {
 }
 const styles = StyleSheet.create({
   View: {
-    width: 392,
+    width: WIDTH_DEVICE,
     height: 130,
   },
-  cardView: {
-    top: 0,
-    bottom: 0,
-    right: 0,
-    left: 0,
-    marginHorizontal: 10,
-    position: 'absolute',
-    borderColor: '#000',
-    borderRadius: 20,
-    overflow: 'hidden',
-    elevation: 5,
+  banner: {
+    height: '100%',
+    width: '100%',
   },
   textCategory: {
     fontSize: 12,
