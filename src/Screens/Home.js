@@ -5,6 +5,7 @@ import {
   Linking,
   ToastAndroid,
   RefreshControl,
+  Dimensions,
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import {
@@ -24,6 +25,8 @@ import ListLatents from '../Components/ListLatents';
 import {connect} from 'react-redux';
 import {getMenu} from '../Public/Redux/Actions/Menu';
 import Icon from 'react-native-vector-icons/Ionicons';
+const HEIGHT_DEVICE = Dimensions.get('window').height;
+const WIDTH_DEVICE = Dimensions.get('window').width;
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -144,25 +147,23 @@ class Home extends Component {
               onPress={() => this.getSearch()}
             />
           </Item>
-          <View style={styles.viewButtonCart}>
-            <Button transparent onPress={() => this.addToCart()}>
-              <Icon name="ios-cart" size={35} style={styles.icon} />
-              <Badge info style={{top: -10}}>
-                <Text>{this.state.cart.length}</Text>
-              </Badge>
-            </Button>
-          </View>
-          <View style={styles.viewButtonCS}>
-            <Button
-              transparent
-              onPress={() =>
-                Linking.openURL(
-                  'whatsapp://send?text=Thanks for Feedback&phone=+6281392371406',
-                )
-              }>
-              <Icon name="ios-chatboxes" size={35} style={styles.icon} />
-            </Button>
-          </View>
+          <Button small transparent onPress={() => this.addToCart()}>
+            <Icon name="ios-cart" size={35} style={styles.icon} />
+            <Badge info style={{top: -10}}>
+              <Text>{this.state.cart.length}</Text>
+            </Badge>
+          </Button>
+          <Button
+            small
+            transparent
+            style={{paddingLeft: 5}}
+            onPress={() =>
+              Linking.openURL(
+                'whatsapp://send?text=Thanks for Feedback&phone=+6281392371406',
+              )
+            }>
+            <Icon name="ios-chatboxes" size={35} style={styles.icon} />
+          </Button>
         </View>
 
         <ScrollView
@@ -183,14 +184,13 @@ class Home extends Component {
             </View>
           </Content>
           <Content>
-            <View style={{flexDirection: 'row'}}>
+            <View style={styles.viewSort}>
               <Text style={styles.textSort}>ASC :</Text>
               <View style={{width: 120}}>
                 <Picker
                   mode="dropdown"
                   placeholder="Sort"
                   iosIcon={<Icon name="ios-arrow-dropup" />}
-                  style={{width: undefined}}
                   selectedValue={this.state.sort}
                   onValueChange={this.getSortASC.bind(this)}>
                   <Picker.Item label="Name" value="name" />
@@ -204,7 +204,6 @@ class Home extends Component {
                   mode="dropdown"
                   placeholder="Sort"
                   iosIcon={<Icon name="ios-arrow-dropdown" />}
-                  style={{width: undefined}}
                   selectedValue={this.state.sort}
                   onValueChange={this.getSortDESC.bind(this)}>
                   <Picker.Item label="Name" value="name" />
@@ -232,33 +231,28 @@ class Home extends Component {
 }
 const styles = StyleSheet.create({
   searchBar: {
-    width: 250,
+    width: '75%',
     height: 35,
     borderColor: '#fff',
     backgroundColor: '#fff',
+  },
+  viewSort: {
+    flexDirection: 'row',
+    width: '100%',
   },
   body: {
     flexDirection: 'row',
     backgroundColor: '#ff4757',
     padding: 12,
     justifyContent: 'flex-start',
+    alignItems: 'center',
   },
   icon: {
     color: '#fff',
   },
-  viewButtonCart: {
-    position: 'absolute',
-    right: 50,
-    paddingVertical: 10,
-  },
-  viewButtonCS: {
-    position: 'absolute',
-    right: 15,
-    paddingVertical: 10,
-  },
   textSort: {
     paddingVertical: 15,
-    paddingHorizontal: 16,
+    paddingHorizontal: 15,
   },
 });
 const mapStateToProps = state => {

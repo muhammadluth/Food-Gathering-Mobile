@@ -64,6 +64,8 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingLeft: 15,
     paddingRight: 15,
+    width: '100%',
+    height: '100%',
   },
   CardLogo: {
     height: 130,

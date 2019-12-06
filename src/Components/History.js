@@ -13,7 +13,7 @@ import {
   Row,
   Col,
 } from 'native-base';
-import {StyleSheet, Dimensions, ScrollView, RefreshControl} from 'react-native';
+import {StyleSheet, ScrollView, RefreshControl} from 'react-native';
 import ConvertRupiah from 'rupiah-format';
 import Http from '../Public/Utils/Http';
 import Header from './Header';
@@ -116,7 +116,7 @@ export default class History extends React.Component {
             <View style={styles.viewAll}>
               <Text style={styles.text}>ALL ORDER</Text>
 
-              <View style={{flexDirection: 'row'}}>
+              <View style={styles.viewAllOrder}>
                 <View style={styles.ViewCard}>
                   <Card style={styles.card}>
                     <Text style={styles.textCard}>Today's Income</Text>
@@ -158,7 +158,6 @@ export default class History extends React.Component {
                     mode="dropdown"
                     iosHeader="Select your SIM"
                     iosIcon={<Icon name="arrow-down" />}
-                    style={{width: undefined}}
                     selectedValue={this.state.recentdata}
                     onValueChange={this.getRecentOrder.bind(this)}>
                     <Picker.Item label="Day" value="day" />
@@ -237,6 +236,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 18,
     fontWeight: 'bold',
+    alignItems: 'center',
     textAlign: 'center',
     marginTop: 20,
     textDecorationLine: 'underline',
@@ -245,11 +245,11 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   ViewCard: {
+    flex: 1,
     marginTop: 10,
     marginLeft: 5,
     marginRight: 5,
     height: 70,
-    width: 120,
   },
   card: {
     height: '100%',
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
   },
   ViewPicker: {
     position: 'absolute',
-    width: 100,
+    width: 120,
     right: 0,
     top: 7,
   },
@@ -278,5 +278,8 @@ const styles = StyleSheet.create({
   },
   ViewRecent: {
     marginTop: 20,
+  },
+  viewAllOrder: {
+    flexDirection: 'row',
   },
 });

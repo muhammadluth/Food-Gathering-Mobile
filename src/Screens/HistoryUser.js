@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, ScrollView, RefreshControl} from 'react-native';
+import {StyleSheet, ScrollView, RefreshControl, Dimensions} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import {
   Container,
@@ -17,6 +17,8 @@ import {
 import Header from '../Components/Header';
 import Http from '../Public/Utils/Http';
 import ConvertRupiah from 'rupiah-format';
+const HEIGHT_DEVICE = Dimensions.get('window').height;
+const WIDTH_DEVICE = Dimensions.get('window').width;
 
 export default class HistoryUser extends Component {
   constructor(props) {

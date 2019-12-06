@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, Image, ToastAndroid} from 'react-native';
+import {StyleSheet, Image, ToastAndroid, Dimensions} from 'react-native';
 import {
   Container,
   Header,
@@ -19,6 +19,8 @@ import Http from '../Public/Utils/Http';
 import PasswordInputText from 'react-native-hide-show-password-input';
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-community/async-storage';
+const HEIGHT_DEVICE = Dimensions.get('window').height;
+const WIDTH_DEVICE = Dimensions.get('window').width;
 export default class Login extends Component {
   constructor(props) {
     super(props);
@@ -69,13 +71,13 @@ export default class Login extends Component {
           colors={['#ff4757', '#ff6b81', '#dfe4ea']}
           style={styles.linearGradient}>
           <Content>
-            <View style={styles.ViewLogo}>
-              <Image
-                style={styles.logo}
-                source={require('../Assets/Images/FOOD_GATHERING.png')}
-              />
-            </View>
             <View style={styles.Card}>
+              <View style={styles.ViewLogo}>
+                <Image
+                  style={styles.logo}
+                  source={require('../Assets/Images/FoodGathering.png')}
+                />
+              </View>
               <Card style={styles.cardLogin}>
                 <View>
                   <Title style={styles.ViewTitle}>Login</Title>
@@ -135,9 +137,8 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   Card: {
-    elevation: 0,
-    margin: 10,
     borderRadius: 20,
+    marginHorizontal: 10,
   },
   ViewButton: {
     flexDirection: 'row',
@@ -147,6 +148,8 @@ const styles = StyleSheet.create({
   },
   linearGradient: {
     flex: 1,
+    width: '100%',
+    height: '100%',
     paddingLeft: 15,
     paddingRight: 15,
     borderTopRightRadius: 300,
@@ -171,8 +174,6 @@ const styles = StyleSheet.create({
   },
   ViewLogo: {
     alignItems: 'center',
-    paddingTop: 50,
-    marginBottom: -50,
   },
   logo: {
     width: 200,

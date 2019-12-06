@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, Image, ToastAndroid} from 'react-native';
+import {StyleSheet, Image, ToastAndroid, Dimensions} from 'react-native';
 import {
   Container,
   Header,
@@ -18,6 +18,8 @@ import {
 import Http from '../Public/Utils/Http';
 import PasswordInputText from 'react-native-hide-show-password-input';
 import LinearGradient from 'react-native-linear-gradient';
+const HEIGHT_DEVICE = Dimensions.get('window').height;
+const WIDTH_DEVICE = Dimensions.get('window').width;
 export default class SignUp extends Component {
   constructor(props) {
     super(props);
@@ -42,7 +44,6 @@ export default class SignUp extends Component {
     })
       .then(res => {
         this.setState({loading: false});
-        console.log(res);
         ToastAndroid.show(
           'Registations Success',
           ToastAndroid.TOP,
@@ -57,20 +58,19 @@ export default class SignUp extends Component {
       });
   }
   render() {
-    console.log(this.state);
     return (
       <Container>
         <LinearGradient
           colors={['#ff4757', '#ff6b81', '#dfe4ea']}
           style={styles.linearGradient}>
           <Content>
-            <View style={styles.ViewLogo}>
-              <Image
-                style={styles.logo}
-                source={require('../Assets/Images/FOOD_GATHERING.png')}
-              />
-            </View>
             <View style={styles.Card}>
+              <View style={styles.ViewLogo}>
+                <Image
+                  style={styles.logo}
+                  source={require('../Assets/Images/FoodGathering.png')}
+                />
+              </View>
               <Card style={{borderRadius: 20}}>
                 <View>
                   <Title style={styles.ViewTitle}>Sign Up</Title>
@@ -129,8 +129,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   Card: {
-    elevation: 0,
-    margin: 10,
+    marginHorizontal: 10,
     borderRadius: 20,
   },
   ViewButton: {
@@ -142,6 +141,8 @@ const styles = StyleSheet.create({
     paddingRight: 15,
     borderTopRightRadius: 300,
     borderBottomLeftRadius: 300,
+    height: '100%',
+    width: '100%',
   },
   Button: {
     flex: 1,
@@ -162,8 +163,6 @@ const styles = StyleSheet.create({
   },
   ViewLogo: {
     alignItems: 'center',
-    paddingTop: 40,
-    marginBottom: -50,
   },
   logo: {
     width: 200,
