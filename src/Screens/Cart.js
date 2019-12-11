@@ -28,13 +28,8 @@ export default class Cart extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      modalVisible: false,
-      data: [],
       cart: [],
-      total: 0,
-      name: '',
       user: '',
-      email: '',
       token: '',
       refresh: false,
       refreshing: false,
@@ -48,12 +43,10 @@ export default class Cart extends Component {
     try {
       const value = await AsyncStorage.getItem('user');
       const token = await AsyncStorage.getItem('token');
-      const email = await AsyncStorage.getItem('email');
       if (value !== null) {
         this.setState({
           user: value,
           token: token,
-          email: email,
         });
       }
     } catch (error) {
@@ -77,12 +70,20 @@ export default class Cart extends Component {
     let cashier = await this.state.user;
     let receipt = Math.floor(Math.random() * 10000);
     this.state.cart.map((item, index) => {
-      Http.post(`/api/v1/order/`, {
-        invoices: receipt,
-        user: cashier,
-        orders: item.name,
-        amount: item.price * item.qty,
-      })
+      Http.post(
+        `/api/v1/order/`,
+        {
+          invoices: receipt,
+          user: cashier,
+          orders: item.name,
+          amount: item.price * item.qty,
+        },
+        {
+          headers: {
+            authorization: this.state.token,
+          },
+        },
+      )
         .then(res => {
           ToastAndroid.show(
             'Success Checkout',
