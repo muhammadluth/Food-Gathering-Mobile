@@ -46,7 +46,7 @@ export default class Login extends Component {
         this.setState({loading: false});
         if (res.data.success === 200) {
           AsyncStorage.setItem('user', `${res.data.username}`);
-          AsyncStorage.setItem('token', `${res.data.token}`);
+          AsyncStorage.setItem('token', `Bearer: ${res.data.token}`);
           AsyncStorage.setItem('email', `${res.data.email}`);
           ToastAndroid.show(
             'Login Success',

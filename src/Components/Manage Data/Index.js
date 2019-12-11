@@ -21,6 +21,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {getMenu} from '../../Public/Redux/Actions/Menu';
+import AsyncStorage from '@react-native-community/async-storage';
 import Header from '../Header';
 import Http from '../../Public/Utils/Http';
 import ConvertRupiah from 'rupiah-format';
@@ -33,10 +34,19 @@ class Index extends Component {
       loading: true,
       refresh: false,
       loadingItem: false,
+      token: '',
     };
   }
-  componentDidMount() {
-    this.fetchData();
+  async componentDidMount() {
+    await this.fetchData();
+    try {
+      const value = await AsyncStorage.getItem('token');
+      if (value !== null) {
+        this.setState({token: value});
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
   async fetchData() {
     await this.props.dispatch(
@@ -49,7 +59,11 @@ class Index extends Component {
 
   handleDelete = async id => {
     this.setState({loadingItem: true});
-    Http.delete(`/api/v1/product/${id}`)
+    Http.delete(`/api/v1/product/${id}`, {
+      headers: {
+        authorization: this.state.token,
+      },
+    })
       .then(res => {
         this.setState({loadingItem: false});
         ToastAndroid.show(
@@ -90,18 +104,15 @@ class Index extends Component {
             <View>
               <Text style={styles.text}>MANAGE DATA</Text>
             </View>
-            <ListItem icon>
-              <Left>
-                <Button
-                  style={{backgroundColor: '#007AFF'}}
-                  onPress={() => this.props.navigation.navigate('AddData')}>
-                  <Icon active name="add" />
-                </Button>
-              </Left>
-              <Body>
-                <Text>Add Data</Text>
-              </Body>
-            </ListItem>
+            <View style={styles.buttonCreate}>
+              <Button
+                style={{borderRadius: 5}}
+                info
+                small
+                onPress={() => this.props.navigation.navigate('AddData')}>
+                <Text>CREATE DATA</Text>
+              </Button>
+            </View>
             {this.state.loading === true ? (
               <Spinner color="#ff4757" />
             ) : (
@@ -163,23 +174,15 @@ class Index extends Component {
   }
 }
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 24,
-    margin: 18,
-    fontFamily: 'GothamRounded-Bold',
-    fontWeight: 'bold',
-    color: '#ff4757',
-  },
   text: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginTop: 20,
-    marginBottom: 20,
-    textDecorationLine: 'underline',
+    marginVertical: 20,
   },
-  icons: {
-    margin: 20,
+  buttonCreate: {
+    alignItems: 'flex-start',
+    marginHorizontal: 20,
   },
 });
 const mapStateToProps = state => {

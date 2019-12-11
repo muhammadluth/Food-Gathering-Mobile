@@ -16,6 +16,7 @@ import {
   Spinner,
   Card,
 } from 'native-base';
+import AsyncStorage from '@react-native-community/async-storage';
 import ImagePicker from 'react-native-image-picker';
 import Header from '../Header';
 import Http from '../../Public/Utils/Http';
@@ -30,11 +31,22 @@ class AddProduct extends Component {
       price: '',
       qty: '',
       allPage: [],
+      token: '',
       loading: false,
       isUpload: false,
     };
   }
 
+  async componentDidMount() {
+    try {
+      const value = await AsyncStorage.getItem('token');
+      if (value !== null) {
+        this.setState({token: value});
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
   setSelectCategory = async value => {
     await this.setState({category: value});
   };
@@ -68,7 +80,11 @@ class AddProduct extends Component {
     pd.append('category_id', category);
     pd.append('price', price);
     pd.append('qty', qty);
-    await Http.post(`/api/v1/product/`, pd)
+    await Http.post(`/api/v1/product/`, pd, {
+      headers: {
+        authorization: this.state.token,
+      },
+    })
       .then(res => {
         this.setState({loading: false});
         if (res.data.status === 200) {
@@ -96,101 +112,87 @@ class AddProduct extends Component {
         </View>
         <Content>
           <View>
-            <Text style={styles.text}>Add Product</Text>
+            <Text style={styles.text}>CREATE DATA</Text>
           </View>
           <View>
             <Form>
               <View style={styles.viewForm}>
-                <Card style={styles.cardForm}>
-                  <View style={{alignItems: 'center'}}>
-                    {this.state.isUpload === true ? (
-                      <Button
-                        bordered
-                        disabled
-                        style={styles.buttonChosePhoto}
-                        onPress={() => this.handleChoosePhoto()}>
-                        <Icon
-                          type="Ionicons"
-                          name="checkmark-circle-outline"
-                          style={{color: '#000'}}
-                        />
-                      </Button>
-                    ) : (
-                      <Button
-                        bordered
-                        style={styles.buttonChosePhoto}
-                        onPress={() => this.handleChoosePhoto()}>
-                        <Icon type="Ionicons" name="add" />
-                      </Button>
-                    )}
-                  </View>
-                  <View>
-                    <Item stackedLabel>
-                      <Label>Product</Label>
-                      <Input
-                        onChangeText={Text => this.setState({name: Text})}
-                        value={this.state.name}
-                      />
-                    </Item>
-                  </View>
-                  <View>
-                    <Item stackedLabel>
-                      <Label>Description</Label>
-                      <Textarea
-                        rowSpan={3}
-                        onChangeText={Text =>
-                          this.setState({description: Text})
-                        }
-                        value={this.state.description}
-                      />
-                    </Item>
-                  </View>
-                  <View>
-                    <Item stackedLabel style={{alignItems: 'flex-start'}}>
-                      <Label>Category</Label>
-                      <Picker
-                        mode="dropdown"
-                        iosHeader="Select Category"
-                        iosIcon={<Icon name="arrow-down" />}
-                        style={styles.piceker}
-                        selectedValue={this.state.category}
-                        onValueChange={this.setSelectCategory}>
-                        <Picker.Item label="Makanan" value="9" />
-                        <Picker.Item label="Minuman" value="10" />
-                        <Picker.Item label="Jajanan" value="11" />
-                      </Picker>
-                    </Item>
-                  </View>
-                  <View>
-                    <Item stackedLabel>
-                      <Label>Price</Label>
-                      <Input
-                        onChangeText={Text => this.setState({price: Text})}
-                        value={this.state.price}
-                      />
-                    </Item>
-                  </View>
-                  <View>
-                    <Item stackedLabel>
-                      <Label>Quantity</Label>
-                      <Input
-                        onChangeText={Text => this.setState({qty: Text})}
-                        value={this.state.qty}
-                      />
-                    </Item>
-                  </View>
-                  <View style={styles.viewButton}>
+                <View style={{alignItems: 'center'}}>
+                  {this.state.isUpload === true ? (
                     <Button
-                      style={styles.buttons}
-                      onPress={this.handleAddProduct}>
-                      {this.state.loading === true ? (
-                        <Spinner color="#fff" style={{width: '100%'}} />
-                      ) : (
-                        <Text>Save Data</Text>
-                      )}
+                      bordered
+                      disabled
+                      style={styles.buttonChosePhoto}
+                      onPress={() => this.handleChoosePhoto()}>
+                      <Icon
+                        type="Ionicons"
+                        name="checkmark-circle-outline"
+                        style={{color: '#000'}}
+                      />
                     </Button>
-                  </View>
-                </Card>
+                  ) : (
+                    <Button
+                      bordered
+                      style={styles.buttonChosePhoto}
+                      onPress={() => this.handleChoosePhoto()}>
+                      <Icon type="Ionicons" name="add" />
+                    </Button>
+                  )}
+                </View>
+                <View style={styles.form}>
+                  <Item style={styles.item} regular>
+                    <Input
+                      placeholder="Product"
+                      onChangeText={Text => this.setState({name: Text})}
+                      value={this.state.name}
+                    />
+                  </Item>
+                  <Item style={styles.item} regular>
+                    <Textarea
+                      placeholder="Descriptions"
+                      rowSpan={3}
+                      onChangeText={Text => this.setState({description: Text})}
+                      value={this.state.description}
+                    />
+                  </Item>
+                  <Item style={styles.item} regular>
+                    <Picker
+                      mode="dropdown"
+                      iosHeader="Select Category"
+                      iosIcon={<Icon name="arrow-down" />}
+                      selectedValue={this.state.category}
+                      onValueChange={this.setSelectCategory}>
+                      <Picker.Item label="Makanan" value="9" />
+                      <Picker.Item label="Minuman" value="10" />
+                      <Picker.Item label="Jajanan" value="11" />
+                    </Picker>
+                  </Item>
+                  <Item style={styles.item} regular>
+                    <Input
+                      placeholder="Price"
+                      onChangeText={Text => this.setState({price: Text})}
+                      value={this.state.price}
+                    />
+                  </Item>
+                  <Item style={styles.item} regular>
+                    <Input
+                      placeholder="Stock"
+                      onChangeText={Text => this.setState({qty: Text})}
+                      value={this.state.qty}
+                    />
+                  </Item>
+                </View>
+                <View style={styles.viewButton}>
+                  <Button
+                    style={styles.buttons}
+                    onPress={this.handleAddProduct}>
+                    {this.state.loading === true ? (
+                      <Spinner color="#fff" style={{width: '100%'}} />
+                    ) : (
+                      <Text>Save Data</Text>
+                    )}
+                  </Button>
+                </View>
               </View>
             </Form>
           </View>
@@ -201,10 +203,6 @@ class AddProduct extends Component {
 }
 
 const styles = StyleSheet.create({
-  piceker: {
-    width: 150,
-    marginLeft: -7,
-  },
   text: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -223,11 +221,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   viewForm: {
-    margin: 20,
+    margin: 10,
   },
-  cardForm: {
-    padding: 30,
-    borderRadius: 10,
+  form: {
+    paddingTop: 25,
+  },
+  item: {
+    marginVertical: 5,
+    borderRadius: 5,
+    borderColor: '#bdc3c7',
+    marginLeft: 10,
+    marginRight: 10,
   },
   buttonChosePhoto: {
     borderColor: '#ff4757',
